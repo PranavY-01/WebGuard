@@ -67,7 +67,7 @@ string.
 | INV-02 pinned connect, peer asserted | `GuardedNetworkBackend._verify_peer` | S-03, S-04, S-05 |
 | INV-03 verified TLS, one factory | `egress.tls_context` + static scan | S-08..S-10, S-12 |
 | INV-04 one resolution per hop | pinned backend never resolves | S-04 |
-| INV-05 no environment influence | no httpx; `SSLContext` built directly; explicit CA file | S-14 |
+| INV-05 no environment influence (and no internet from tests) | no httpx; `SSLContext` built directly; explicit CA file; autouse loopback-only network guard in `tests/conftest.py` | S-14, S-29 |
 | INV-06 orchestrator-only redirects | `app.redirects.next_hop` | I-05, I-06, S-06, S-07 |
 | INV-07 no body, ≤128 KiB | `GuardedStream` cap; close after headers | S-15 |
 | INV-08 clamped blocking ops | `clamp()` in stream, backend, resolver | S-16, S-17, S-18 |
@@ -127,6 +127,26 @@ trustme 1.2.1) on CPython 3.12.16, 3.13.18 and 3.14.10 (OpenSSL 3.5.9), on loopb
    cooling-off, with a regression test on the installed bundle.
 
 ## Implementation decisions (where the plan is silent)
+
+**Process and tests**
+- Build-prompt rule 13 is amended (ratified by the project owner, 2026-10-28) to: *"WebGuard's runtime and its
+  test suite MUST NOT contact any host other than local fixtures. Build tooling MAY contact package indexes,
+  uv's Python distribution sources, and vulnerability databases for locking, installing, and auditing."*
+- **S-29, mechanical no-internet enforcement for tests.** The autouse `network_guard` fixture in
+  `tests/conftest.py` (implementation in `tests/fixtures/network_guard.py`) patches `socket.socket.connect`,
+  `socket.socket.connect_ex` and `socket.create_connection`. Any address that is not a loopback IP literal raises
+  before a packet is sent.
+  - Stricter addition: `socket.getaddrinfo` is guarded too, so a DNS query can't leave the machine; only
+    loopback literals, `localhost` and `None` resolve.
+  - `AF_UNIX` sockets are local IPC and are allowed.
+  - The guard raises `OutboundNetworkBlockedError`, a `BaseException` subclass. egress's `except Exception`
+    boundary therefore cannot turn a forbidden connection into an ordinary failure code.
+  - Each blocked attempt is also recorded, and the fixture fails the test at teardown if any remain. Tests that
+    trigger the guard on purpose clear the record after asserting on it.
+  - S-29 is listed under INV-05.
+- **Install paths.** End users install with `pip install .` or `pipx install .` and need no uv; pip resolves the
+  ranges in `pyproject.toml`. Contributors use `uv sync --locked` for the exact hash-pinned set. uv-managed
+  Pythons are optional and only useful for local multi-version testing; CI covers the matrix.
 
 **Policy and URL**
 - Rejection codes `url_too_long` and `url_illegal_chars` map to exit 2; all other rejections map to exit 3.

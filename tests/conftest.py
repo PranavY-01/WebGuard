@@ -7,6 +7,7 @@ from collections.abc import Iterator
 
 import pytest
 
+from tests.fixtures.network_guard import NetworkGuard
 from tests.fixtures.pki import FixturePki, build_pki
 from tests.fixtures.server import FixtureServer
 from tests.fixtures.stubs import StubResolver, TestScopePolicy
@@ -15,6 +16,16 @@ from webguard.egress import USER_AGENT, EgressDeps
 from webguard.policy.url import CanonicalTarget, canonicalize_url
 
 FIXTURE_PORT = 8443
+
+
+@pytest.fixture(autouse=True)
+def network_guard(monkeypatch: pytest.MonkeyPatch) -> Iterator[NetworkGuard]:
+    """S-29: every test may contact loopback only; anything else raises before a packet is sent.
+    Tests that trigger the guard on purpose clear `blocked` after asserting on it."""
+    guard = NetworkGuard()
+    guard.install(monkeypatch)
+    yield guard
+    assert guard.blocked == [], f"non-loopback network access attempted: {guard.blocked}"
 
 
 @pytest.fixture(scope="session")

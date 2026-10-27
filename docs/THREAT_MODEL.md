@@ -35,7 +35,7 @@ trusted, and so is code calling the Python API.
 | T-13 | Exception leakage | Closed `FailureCode` enum; static details; one-line CLI errors | S-19, CLI tests |
 | T-14 | Proxy / environment influence | httpcore used directly; explicit CA file; `SSLKEYLOGFILE` neutralized | S-14 |
 | T-15 | Unauthorized or disruptive scan | `--i-am-authorized`; ≤4 GETs; ports 443/8443 | CLI tests, I-06 |
-| T-16 | Test coverage gaps | S/U/I suites; release gates | CI |
+| T-16 | Test coverage gaps (incl. tests silently reaching the internet) | S/U/I suites; loopback-only network guard; release gates | CI, S-29 |
 | T-17 | Credential forwarding | Fixed D-05 header set; no cookies or auth ever | S-26 |
 | T-18 | Log injection | SafeText; `SafeLogFilter` drops unsafe args | U-50 |
 | T-19 | Temporary-file exposure | Temp files `0600`, `O_EXCL`, removed on any failure | S-25 |

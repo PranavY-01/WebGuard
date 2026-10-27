@@ -31,15 +31,31 @@ Day 5 of the *7 Days – 7 Builds* series (after NetScope, TraceDNS, FileSift an
 
 Requires CPython 3.12, 3.13 or 3.14 on Linux, macOS or Windows.
 
+**Users** need only pip; no uv required:
+
 ```console
 $ git clone https://github.com/PranavY-01/WebGuard
 $ cd WebGuard
-$ uv tool install .          # or: pipx install .   /   python -m pip install .
+$ pipx install .             # isolated install, recommended
+$ # or, inside a virtual environment:
+$ python -m pip install .
 $ webguard version
 WebGuard 1.0.0 (report schema 1.0)
 ```
 
-`python -m webguard` works the same as `webguard`.
+`python -m webguard` works the same as `webguard`. pip resolves the dependency ranges declared in
+`pyproject.toml`. For the exact hash-pinned set used in CI, see the contributor path below.
+
+**Contributors** use [uv](https://docs.astral.sh/uv/) with the committed `uv.lock`:
+
+```console
+$ uv sync --locked           # creates .venv with exactly the locked, hash-verified dependencies
+$ uv run webguard version
+```
+
+Optional, for local multi-version testing: uv can install managed interpreters (`uv python install 3.12 3.13 3.14`)
+and run the suite against each (`UV_PYTHON=3.13 uv run --locked pytest`). Any CPython 3.12+ you already have works
+just as well. CI covers all three versions on Linux, macOS and Windows.
 
 ## Quick start
 
@@ -261,8 +277,9 @@ $ uv run python -m tests.unit.render_docs   # regenerate docs/RULES.md and the k
 $ uv run python -m tests.make_samples       # regenerate samples/ from local fixtures
 ```
 
-Tests never touch the internet. They run against a local TLS server on `127.0.0.1:8443` with a locally generated
-CA. That CA, a permissive scope policy and a stub resolver are injected through the Python API and exist only
+Tests never touch the internet, and this is enforced mechanically: an autouse fixture makes any connect or name
+lookup to a non-loopback host raise before a packet is sent (S-29). Tests run against a local TLS server on
+`127.0.0.1:8443` with a locally generated CA. That CA, a permissive scope policy and a stub resolver are injected through the Python API and exist only
 under `tests/`. CI runs the full suite on Linux, macOS and Windows × Python 3.12, 3.13 and 3.14, and audits the
 locked dependencies with `pip-audit`.
 
