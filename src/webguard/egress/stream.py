@@ -11,7 +11,7 @@ import socket
 import ssl
 from dataclasses import dataclass
 from ipaddress import IPv4Address, IPv6Address
-from typing import Any
+from typing import Any, NoReturn
 
 from httpcore import NetworkStream
 
@@ -20,12 +20,14 @@ from webguard.domain.budget import (
     READ_TIMEOUT_S,
     TLS_WRITE_TIMEOUT_S,
     Budget,
+    DeadlineExceededError,
     clamp,
 )
 from webguard.domain.evidence import TlsEvidence
 from webguard.egress.capture import capture_tls
 from webguard.egress.errors import (
     ConnectTimeoutError,
+    EgressError,
     MalformedResponseError,
     PolicyViolationError,
     ReadTimeoutError,
@@ -75,7 +77,7 @@ class GuardedStream(NetworkStream):
             # Ask for at most one byte past the cap, so the overshoot is bounded by 1 byte.
             data = self._sock.recv(min(max_bytes, allowance + 1))
         except TimeoutError as exc:
-            raise ReadTimeoutError from exc
+            self._raise_timeout(ReadTimeoutError(), exc)
         except ssl.SSLError as exc:
             raise MalformedResponseError("tls_record_error") from exc
         except OSError as exc:
@@ -92,13 +94,20 @@ class GuardedStream(NetworkStream):
         try:
             self._sock.sendall(buffer)
         except TimeoutError as exc:
-            raise ReadTimeoutError("write_timeout") from exc
+            self._raise_timeout(ReadTimeoutError("write_timeout"), exc)
         except OSError as exc:
             raise MalformedResponseError("connection_error") from exc
         self._recorder.bytes_written += len(buffer)
 
     def close(self) -> None:
         self._sock.close()
+
+    def _raise_timeout(self, phase_error: EgressError, cause: TimeoutError) -> NoReturn:
+        """A clamped timeout that consumed the remaining budget is the scan deadline, not a
+        slow phase (INV-08); otherwise it is the phase's own timeout."""
+        if self._budget.remaining() <= 0:
+            raise DeadlineExceededError from cause
+        raise phase_error from cause
 
     def start_tls(
         self,
@@ -125,7 +134,7 @@ class GuardedStream(NetworkStream):
             raise TlsHandshakeError("certificate_verification") from exc
         except TimeoutError as exc:
             self.close()
-            raise ConnectTimeoutError("tls_handshake_timeout") from exc
+            self._raise_timeout(ConnectTimeoutError("tls_handshake_timeout"), exc)
         except ssl.SSLError as exc:
             self.close()
             raise TlsHandshakeError("handshake_error") from exc

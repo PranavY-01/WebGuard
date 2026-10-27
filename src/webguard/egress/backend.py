@@ -14,7 +14,13 @@ from ipaddress import IPv4Address, IPv6Address, ip_address
 
 from httpcore import NetworkBackend, NetworkStream
 
-from webguard.domain.budget import CONNECT_ATTEMPTS_PER_HOP, CONNECT_TIMEOUT_S, Budget, clamp
+from webguard.domain.budget import (
+    CONNECT_ATTEMPTS_PER_HOP,
+    CONNECT_TIMEOUT_S,
+    Budget,
+    DeadlineExceededError,
+    clamp,
+)
 from webguard.egress.errors import (
     ConnectFailedError,
     ConnectTimeoutError,
@@ -85,6 +91,8 @@ class GuardedNetworkBackend(NetworkBackend):
             sock.connect((str(ip), port))
         except TimeoutError as exc:
             sock.close()
+            if self._budget.remaining() <= 0:
+                raise DeadlineExceededError from exc
             raise ConnectTimeoutError from exc
         except OSError as exc:
             sock.close()
