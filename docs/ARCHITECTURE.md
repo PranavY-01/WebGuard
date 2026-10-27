@@ -144,7 +144,9 @@ trustme 1.2.1) on CPython 3.12.16, 3.13.18 and 3.14.10 (OpenSSL 3.5.9), on loopb
   - Each blocked attempt is also recorded, and the fixture fails the test at teardown if any remain. Tests that
     trigger the guard on purpose clear the record after asserting on it.
   - S-29 is listed under INV-05.
-- **Install paths.** End users install with `pip install .` or `pipx install .` and need no uv; pip resolves the
+- **Install paths and reader-facing docs.** The README and `docs/USER_GUIDE.md` (the instruction manual) are
+  written for users; build and design material lives in `CONTRIBUTING.md` and this file. End users install with
+  `pip install .` or `pipx install .` and need no uv; pip resolves the
   ranges in `pyproject.toml`. Contributors use `uv sync --locked` for the exact hash-pinned set. uv-managed
   Pythons are optional and only useful for local multi-version testing; CI covers the matrix.
 
