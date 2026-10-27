@@ -1,4 +1,17 @@
 $ webguard scan http://webguard.test/ --i-am-authorized
-Target rejected (scheme_not_https); nothing was sent.
-Exit 3: target rejected: scheme_not_https
+◆ WebGuard  v1.0.0  passive web security configuration audit
+╭─  Scan plan  ──────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Target      http://webguard.test/                                                                          │
+│ Redirects   not followed                                                                                   │
+│ Deadline    30 s                                                                                           │
+│ Fail on     high and above                                                                                 │
+│ Reports     reports                                                                                        │
+│ Authorized  ✔ confirmed by --i-am-authorized                                                               │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─  ✘ Target refused  ───────────────────────────────────────────────────────────────────────────────────────╮
+│ Reason  scheme_not_https                                                                                   │
+│ Nothing was sent: no request was made to the target.                                                       │
+│ → Use the site's https:// address. Plain HTTP is never scanned.                                            │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+▲ Exit 3: target rejected: scheme_not_https
 (exit code 3)

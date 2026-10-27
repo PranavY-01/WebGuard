@@ -90,6 +90,13 @@ WebGuard 1.0.0 (report schema 1.0)
 
 If the `webguard` command isn't found, `python -m webguard` does the same thing.
 
+Run `webguard` on its own to see the welcome screen with the commands and quick-start examples:
+
+![WebGuard welcome screen](../samples/cli-welcome.svg)
+
+Every command has its own help screen with grouped options and examples: `webguard --help`,
+`webguard scan --help`.
+
 To **upgrade**, pull the latest code and run `pipx install --force .` (or `pip install --upgrade .`). To
 **uninstall**, run `pipx uninstall webguard` (or `pip uninstall webguard`).
 
@@ -99,43 +106,92 @@ To **upgrade**, pull the latest code and run `pipx install --force .` (or `pip i
 $ webguard scan https://www.your-site.example/ --i-am-authorized
 ```
 
-A scan usually takes a second or two. Here is real output from a scan of WebGuard's local test server, whose page
-is missing its security headers:
+A scan usually takes a second or two. While it runs, an animated status line shows what WebGuard is doing
+(resolving, connecting, verifying TLS, reading headers, evaluating, writing reports).
+
+Here is real output from a scan of WebGuard's local test server, whose page is missing its security headers. In a
+terminal it is in colour:
+
+![WebGuard scan output](../samples/cli-scan-findings.svg)
+
+The same output as plain text:
 
 ```text
 $ webguard scan https://webguard.test:8443/missing --i-am-authorized --fail-on medium --output findings
-                                              WebGuard results
-┌────────────┬─────────┬────────────────┬──────────┬────────────────────────────────────────────────────────┐
-│ Rule       │ Subject │ Status         │ Severity │ Message                                                │
-├────────────┼─────────┼────────────────┼──────────┼────────────────────────────────────────────────────────┤
-│ WG-CK-001  │ -       │ not_applicable │ -        │ No Set-Cookie headers were observed.                   │
-│ WG-CK-002  │ -       │ not_applicable │ -        │ No Set-Cookie headers were observed.                   │
-│ WG-CK-003  │ -       │ not_applicable │ -        │ No Set-Cookie headers were observed.                   │
-│ WG-CK-004  │ -       │ not_applicable │ -        │ No Set-Cookie headers were observed.                   │
-│ WG-HDR-001 │ hop:0   │ finding        │ medium   │ No Strict-Transport-Security header was returned.      │
-│ WG-HDR-002 │ hop:0   │ finding        │ low      │ No Content-Security-Policy header was returned.        │
-│ WG-HDR-003 │ hop:0   │ finding        │ low      │ No X-Content-Type-Options header was returned.         │
-│ WG-RDR-001 │ hop:0   │ not_applicable │ -        │ The response is not a redirect.                        │
-│ WG-TLS-001 │ hop:0   │ pass           │ -        │ The certificate chain and hostname verified against    │
-│            │         │                │          │ the trust store.                                       │
-│ WG-TLS-002 │ hop:0   │ pass           │ -        │ The certificate remains valid for more than 30 days.   │
-└────────────┴─────────┴────────────────┴──────────┴────────────────────────────────────────────────────────┘
-Status completed: 10 checks, 2 pass, 3 finding, 0 inconclusive, 0 error, 5 not applicable (high 0, medium 1,
-low 2, informational 0)
-Target https://webguard.test:8443/missing
-Report written: findings\webguard_20261027T184934Z_80ede724.json
-Report written: findings\webguard_20261027T184934Z_80ede724.html
-Exit 1: finding(s) at or above --fail-on medium
+◆ WebGuard  v1.0.0  passive web security configuration audit
+╭─  Scan plan  ──────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Target      https://webguard.test:8443/missing                                                             │
+│ Redirects   not followed                                                                                   │
+│ Deadline    30 s                                                                                           │
+│ Fail on     medium and above                                                                               │
+│ Reports     findings                                                                                       │
+│ Authorized  ✔ confirmed by --i-am-authorized                                                               │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Results
+╭───────────┬───────────────────────────────────────┬─────────┬──────────┬───────────────────────────────────╮
+│ Status    │ Check                                 │ Subject │ Severity │ Details                           │
+├───────────┼───────────────────────────────────────┼─────────┼──────────┼───────────────────────────────────┤
+│ ✔ pass    │ WG-TLS-001                            │ hop:0   │ -        │ The certificate chain and         │
+│           │ Certificate verification              │         │          │ hostname verified against the     │
+│           │                                       │         │          │ trust store.                      │
+│ ✔ pass    │ WG-TLS-002                            │ hop:0   │ -        │ The certificate remains valid for │
+│           │ Certificate expiry horizon            │         │          │ more than 30 days.                │
+├───────────┼───────────────────────────────────────┼─────────┼──────────┼───────────────────────────────────┤
+│ ✘ finding │ WG-HDR-001                            │ hop:0   │  MEDIUM  │ No Strict-Transport-Security      │
+│           │ HTTP Strict Transport Security (HSTS) │         │          │ header was returned.              │
+│ ✘ finding │ WG-HDR-002                            │ hop:0   │  LOW     │ No Content-Security-Policy header │
+│           │ Content Security Policy (enforcing)   │         │          │ was returned.                     │
+│ ✘ finding │ WG-HDR-003                            │ hop:0   │  LOW     │ No X-Content-Type-Options header  │
+│           │ X-Content-Type-Options                │         │          │ was returned.                     │
+├───────────┼───────────────────────────────────────┼─────────┼──────────┼───────────────────────────────────┤
+│ – n/a     │ WG-CK-001                             │ -       │ -        │ No Set-Cookie headers were        │
+│           │ Cookie Secure attribute               │         │          │ observed.                         │
+│ – n/a     │ WG-CK-002                             │ -       │ -        │ No Set-Cookie headers were        │
+│           │ Cookie HttpOnly attribute             │         │          │ observed.                         │
+│ – n/a     │ WG-CK-003                             │ -       │ -        │ No Set-Cookie headers were        │
+│           │ Cookie SameSite attribute             │         │          │ observed.                         │
+│ – n/a     │ WG-CK-004                             │ -       │ -        │ No Set-Cookie headers were        │
+│           │ Cookie name prefixes                  │         │          │ observed.                         │
+├───────────┼───────────────────────────────────────┼─────────┼──────────┼───────────────────────────────────┤
+│ – n/a     │ WG-RDR-001                            │ hop:0   │ -        │ The response is not a redirect.   │
+│           │ Redirect downgrade to HTTP            │         │          │                                   │
+╰───────────┴───────────────────────────────────────┴─────────┴──────────┴───────────────────────────────────╯
+╭─  What to fix first  ──────────────────────────────────────────────────────────────────────────────────────╮
+│  MEDIUM  WG-HDR-001  No Strict-Transport-Security header was returned.                                     │
+│    → Send `Strict-Transport-Security: max-age=31536000; includeSubDomains` on every HTTPS response once    │
+│    all subdomains serve HTTPS.                                                                             │
+│  LOW  WG-HDR-002  No Content-Security-Policy header was returned.                                          │
+│    → Deploy an enforcing Content-Security-Policy; start from a restrictive default-src and iterate using a │
+│    report-only policy first.                                                                               │
+│  LOW  WG-HDR-003  No X-Content-Type-Options header was returned.                                           │
+│    → Send `X-Content-Type-Options: nosniff` on every response.                                             │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─  Summary  ────────────────────────────────────────────────────────────────────────────────────────────────╮
+│  COMPLETED   https://webguard.test:8443/missing   1 request  |  0.0s                                       │
+│                                                                                                            │
+│ ✔ 2 pass    ✘ 3 finding    ? 0 inconclusive    ! 0 error    – 5 n/a    10 checks                           │
+│  HIGH  0     MEDIUM  1 ■    LOW  2 ■■    INFO  0                                                           │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─  Reports  ────────────────────────────────────────────────────────────────────────────────────────────────╮
+│  JSON   findings\webguard_20261027T193433Z_147adc8f.json                                                   │
+│  HTML   findings\webguard_20261027T193433Z_147adc8f.html                                                   │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+✘ Exit 1: finding(s) at or above --fail-on medium
 ```
 
-How to read it:
+How to read it, from top to bottom:
 
-1. **The table** has one row per check per subject. Here the certificate is fine, cookies weren't set at all, and
-   three headers are missing.
-2. **The status line** counts the outcomes and the findings by severity.
-3. **The report paths** point to your saved results. By default they go in a `reports` folder in the current
-   directory. Open the `.html` file in a browser for the readable version.
-4. **The exit line** gives the process exit code and the reason (see [section 10](#10-using-webguard-in-ci-and-scripts)).
+1. **Scan plan** confirms what is about to happen: the target (query values are always shown as `REDACTED`),
+   whether redirects are followed, the deadline, the `--fail-on` threshold and the report folder.
+2. **Results** has one row per check per subject, grouped into certificate, header, cookie and redirect sections.
+   Each row shows a status symbol, the check ID and name, what was checked, a coloured severity badge for
+   findings, and an explanation.
+3. **What to fix first** lists the findings from most to least severe, each with the fix. `(x3)` means the same
+   problem was found three times (for example on three cookies).
+4. **Summary** shows the overall scan status, the counts per outcome, and a bar for each severity.
+5. **Reports** gives the paths of the saved JSON and HTML files. By default they go in a `reports` folder in the
+   current directory. Open the `.html` file in a browser for the readable version.
+6. **The exit line** gives the process exit code and the reason (see [section 10](#10-using-webguard-in-ci-and-scripts)).
 
 Next step: look up each `finding` in [section 8](#8-the-ten-checks-and-how-to-fix-them) to see how to fix it.
 
@@ -257,11 +313,11 @@ never shows cookie names or values, header contents or query values, so it is sa
 
 | Column | Meaning |
 |---|---|
-| **Rule** | Which check, for example `WG-HDR-001` (see [section 8](#8-the-ten-checks-and-how-to-fix-them)). |
+| **Status** | The outcome, with a symbol: `✔ pass`, `✘ finding`, `? inconclusive`, `! error`, `– n/a` (see below). |
+| **Check** | The check ID and name, for example `WG-HDR-001` HSTS (see [section 8](#8-the-ten-checks-and-how-to-fix-them)). |
 | **Subject** | What was checked. `hop:0` is the first response, `hop:1` the next one after a redirect, and so on. `cookie:session@hop:0` is the cookie named `session` set by the first response. `-` means the result applies to the scan as a whole. |
-| **Status** | The outcome, from the table below. |
-| **Severity** | How serious a finding is. It appears only when the status is `finding`. |
-| **Message** | A plain-language explanation. |
+| **Severity** | A coloured badge (`HIGH`, `MEDIUM`, `LOW`, `INFO`) shown only when the status is `finding`. |
+| **Details** | A plain-language explanation. |
 
 ### Statuses
 
@@ -269,7 +325,7 @@ never shows cookie names or values, header contents or query values, so it is sa
 |---|---|
 | `pass` | The check was evaluated against real evidence and the setting is correct. |
 | `finding` | The check was evaluated and something should be fixed. |
-| `not_applicable` | The check doesn't apply here, for example cookie checks when no cookies were set, or CSP on a redirect response. |
+| `not_applicable` (shown as `n/a`) | The check doesn't apply here, for example cookie checks when no cookies were set, or CSP on a redirect response. |
 | `inconclusive` | There wasn't enough evidence to decide. The reason says why: `blocked_by:WG-TLS-001` (the certificate failed, so no page was fetched), `hop_failed`, `scan_deadline` or `scan_interrupted`. |
 | `error` | The check could not run. For WG-TLS-001 this means the secure connection was never established (reasons `tls_not_reached`, `handshake_failed`). `internal_rule_error` means a bug in WebGuard (exit 70). |
 
@@ -566,6 +622,11 @@ for the failure code:
 **Ctrl+C takes a few seconds on Windows.** While waiting on a slow server, Windows delivers Ctrl+C only when the
 current network wait ends, which takes at most about 10 seconds. The partial report is still saved.
 
+**Boxes or symbols look wrong, or I want plain output.** WebGuard detects when the output can't show Unicode
+(for example when redirected to a file on Windows) and switches to plain ASCII symbols automatically. Colours are
+turned off when the output isn't a terminal. Set `NO_COLOR=1` to turn colours off everywhere. Use a modern
+terminal (Windows Terminal, iTerm2, any recent Linux terminal) for the full design.
+
 **`webguard: command not found`.** Use `python -m webguard`, or make sure pipx's bin directory is on your `PATH`
 (`pipx ensurepath`).
 
@@ -618,7 +679,8 @@ webguard scan URL --i-am-authorized      run one scan (reports in ./reports)
     --output DIR                         report directory (default reports)
     --debug                              diagnostics on stderr (no secrets)
 webguard rules                           list the ten checks
-webguard version                         show versions
+webguard version                         show versions and runtime details
+webguard                                 welcome screen; add --help to any command for its options
 
 Exit: 0 ok · 1 findings ≥ threshold · 2 usage · 3 target refused · 4 scan failed/partial
       5 reports not written · 70 internal error · 130 interrupted

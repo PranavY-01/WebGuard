@@ -13,7 +13,10 @@ First release.
 - `webguard scan URL --i-am-authorized`: passive scan of one public `https://` target (ports 443/8443) with at
   most 4 `GET` requests. Optional `--follow-redirects` (≤3 HTTPS-only hops, each re-validated), plus
   `--deadline`, `--fail-on`, `--output` and `--debug`.
-- `webguard rules` and `webguard version`.
+- `webguard rules`, `webguard version`, and a welcome screen when run without arguments.
+- Branded terminal interface built with Rich: gradient logo, scan plan, live progress spinner, grouped results
+  table with severity badges, "What to fix first" panel, summary with severity bars, themed help screens, and an
+  automatic ASCII fallback for consoles that can't display Unicode.
 - 10 rules: WG-TLS-001/002, WG-HDR-001/002/003, WG-CK-001..004 and WG-RDR-001, with an applicability matrix
   and severity/confidence rubric.
 - JSON report (schema 1.0) and a self-contained HTML report (autoescaped, no scripts, own CSP); Rich terminal

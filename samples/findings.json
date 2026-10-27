@@ -5,9 +5,9 @@
     "version": "1.0.0"
   },
   "scan": {
-    "scan_id": "426340ed441a461e9e1926b65d285633",
-    "started_at": "2026-10-27T18:49:49.458250Z",
-    "finished_at": "2026-10-27T18:49:49.473285Z",
+    "scan_id": "147adc8f0fe54b97ad376ae7870ab1ef",
+    "started_at": "2026-10-27T19:34:33.575267Z",
+    "finished_at": "2026-10-27T19:34:33.580258Z",
     "status": "completed",
     "target": {
       "display_url_redacted": "https://webguard.test:8443/missing",

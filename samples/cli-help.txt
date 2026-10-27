@@ -1,0 +1,22 @@
+$ webguard --help
+
+ Usage: webguard [OPTIONS] COMMAND [ARGS]...
+
+ WebGuard - passive web security configuration auditor.
+
+ Checks a site's TLS certificate, HSTS, CSP, X-Content-Type-Options, cookie flags and redirect downgrades,
+ then writes JSON and HTML reports.
+
+┌─ Options ─────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                                               │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+┌─ Commands ────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ scan     Scan one site and write JSON and HTML reports.                                                   │
+│ rules    List the ten checks. Makes no network connections.                                               │
+│ version  Show version, report schema and runtime details.                                                 │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+ Run webguard with no arguments for the welcome screen.
+
+
+(exit code 0)

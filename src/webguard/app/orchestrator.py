@@ -53,6 +53,12 @@ class ScanDeps:
     egress: EgressDeps
     now: Callable[[], datetime] = _utc_now
     new_scan_id: Callable[[], str] = _new_scan_id
+    on_progress: Callable[[Phase, int | None], None] | None = None
+    """Optional observer for the interface: receives only the phase and hop index (static data)."""
+
+    def notify(self, phase: Phase, hop: int | None = None) -> None:
+        if self.on_progress is not None:
+            self.on_progress(phase, hop)
 
 
 @dataclass
@@ -104,6 +110,7 @@ def _fetch(
                 state.deadline_hit = True
                 state.notes.append(ScanNote.DEADLINE_REACHED)
                 break
+            deps.notify(Phase.FETCHING, index)
             outcome = fetch_hop(
                 HopRequest(index=index, target=current),
                 budget,
@@ -218,6 +225,7 @@ def collect(config: ScanConfig, deps: ScanDeps) -> Collected:
     elif state.deadline_hit:
         machine.to(Phase.DEADLINE)
     machine.to(Phase.EVALUATING)
+    deps.notify(Phase.EVALUATING)
     ctx = RuleContext(started_at=started_at, no_evidence_reason=_no_evidence_reason(state))
     results, rule_error, eval_interrupted = _evaluate(state, ctx)
     if eval_interrupted:
@@ -285,6 +293,7 @@ def run_scan(config: ScanConfig, deps: ScanDeps) -> ScanOutcome:
         )
 
     machine.to(Phase.RENDERING)
+    deps.notify(Phase.RENDERING)
     files = [ReportFile("json", render_json(report))]
     render_error: str | None = None
     try:
@@ -294,6 +303,7 @@ def run_scan(config: ScanConfig, deps: ScanDeps) -> ScanOutcome:
         render_error = "template_error"
 
     machine.to(Phase.WRITING)
+    deps.notify(Phase.WRITING)
     sink_error: str | None = None
     try:
         paths = write_reports(

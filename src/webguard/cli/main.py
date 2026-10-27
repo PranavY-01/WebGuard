@@ -18,17 +18,24 @@ from webguard.cli.console import SafeConsole
 from webguard.cli.exitcodes import ExitCode
 
 
+def _never_crash_on_encoding() -> None:
+    """A console that cannot encode a glyph (e.g. cp1252 pipes on Windows) gets '?' instead of a
+    UnicodeEncodeError. The theme already picks ASCII glyphs for such consoles."""
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if callable(reconfigure):
+            reconfigure(errors="replace")
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     args = list(sys.argv[1:] if argv is None else argv)
     debug = "--debug" in args
+    _never_crash_on_encoding()
     out = SafeConsole()
     try:
         result = app(args=args, prog_name="webguard", standalone_mode=False)
-    except typer.Abort:
-        out.error("Interrupted.")
-        return ExitCode.INTERRUPTED
-    except KeyboardInterrupt:
-        out.error("Interrupted.")
+    except (typer.Abort, KeyboardInterrupt):
+        out.interrupted()
         return ExitCode.INTERRUPTED
     except typer.TyperException as exc:
         code = int(getattr(exc, "exit_code", ExitCode.USAGE))
@@ -36,9 +43,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         message = format_message() if callable(format_message) else "invalid usage"
         if code == 0:
             return ExitCode.OK
-        if message:  # empty when Typer already printed help (no arguments given)
-            out.error("Usage error:", str(message))
-            out.info("Run 'webguard --help' for usage.")
+        if message:
+            out.usage_error(str(message))
         return ExitCode.USAGE
     except SystemExit as exc:
         return exc.code if isinstance(exc.code, int) else ExitCode.USAGE
@@ -49,4 +55,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         return ExitCode.INTERNAL_ERROR
     if result is None:
         return ExitCode.OK
-    return int(result)
+    code = int(result)
+    if code == ExitCode.INTERRUPTED:  # Typer returns 130 for an interrupt inside a command (A-06)
+        out.interrupted()
+    return code

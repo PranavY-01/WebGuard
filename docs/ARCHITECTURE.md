@@ -202,6 +202,18 @@ trustme 1.2.1) on CPython 3.12.16, 3.13.18 and 3.14.10 (OpenSSL 3.5.9), on loopb
   Windows.
 - `SafeLogFilter` drops non-string messages and string arguments over 2048 characters, and strips tracebacks
   unless `--debug` is set.
-- Running `webguard` with no arguments prints help and exits 2. `--fail-on` values are case-sensitive.
+- Running `webguard` with no arguments shows the welcome screen and exits 0 (an unknown command still exits 2).
+  `--fail-on` values are case-sensitive.
+- **Terminal interface** (`cli/theme.py`, `cli/console.py`): a branded Rich design with a gradient logo, panels,
+  severity badges, a grouped results table, "What to fix first", a summary with severity bars, and themed Typer
+  help screens (options grouped into Required / Scan behaviour / Output). Safety is unchanged: every dynamic value
+  is a `Text` object styled only with static theme values, and markup, highlighting and emoji stay disabled.
+  - Operator-typed text is shown with non-printable characters escaped.
+  - The scan plan shows the canonical **redacted** target; an invalid URL is shown only up to its query string.
+  - Glyphs fall back to ASCII when the console encoding isn't UTF (for example cp1252 pipes on Windows), and
+    `main()` sets `errors="replace"` on stdout/stderr, so output encoding can never crash a scan (tested).
+  - The live spinner runs only on interactive terminals and never with `--debug`. It is driven by
+    `ScanDeps.on_progress`, an optional callback that receives only the phase and hop index, so `app` stays free
+    of Rich.
 - A partial scan with a finding at or above the threshold exits 1; without one it exits 4.
 - `uv` `exclude-newer` enforces a two-week cooling-off for dependencies (certifi is exempt; see conflict 8).

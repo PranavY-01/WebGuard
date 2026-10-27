@@ -1,32 +1,73 @@
 $ webguard scan https://expired.webguard.test:8443/ --i-am-authorized --output expired-cert
-                                              WebGuard results                                               
-┌────────────┬─────────┬──────────────┬──────────┬──────────────────────────────────────────────────────────┐
-│ Rule       │ Subject │ Status       │ Severity │ Message                                                  │
-├────────────┼─────────┼──────────────┼──────────┼──────────────────────────────────────────────────────────┤
-│ WG-CK-001  │ hop:0   │ inconclusive │ -        │ Not evaluated: the certificate could not be verified, so │
-│            │         │              │          │ no HTTP exchange took place.                             │
-│ WG-CK-002  │ hop:0   │ inconclusive │ -        │ Not evaluated: the certificate could not be verified, so │
-│            │         │              │          │ no HTTP exchange took place.                             │
-│ WG-CK-003  │ hop:0   │ inconclusive │ -        │ Not evaluated: the certificate could not be verified, so │
-│            │         │              │          │ no HTTP exchange took place.                             │
-│ WG-CK-004  │ hop:0   │ inconclusive │ -        │ Not evaluated: the certificate could not be verified, so │
-│            │         │              │          │ no HTTP exchange took place.                             │
-│ WG-HDR-001 │ hop:0   │ inconclusive │ -        │ Not evaluated: the certificate could not be verified, so │
-│            │         │              │          │ no HTTP exchange took place.                             │
-│ WG-HDR-002 │ hop:0   │ inconclusive │ -        │ Not evaluated: the certificate could not be verified, so │
-│            │         │              │          │ no HTTP exchange took place.                             │
-│ WG-HDR-003 │ hop:0   │ inconclusive │ -        │ Not evaluated: the certificate could not be verified, so │
-│            │         │              │          │ no HTTP exchange took place.                             │
-│ WG-RDR-001 │ hop:0   │ inconclusive │ -        │ Not evaluated: the certificate could not be verified, so │
-│            │         │              │          │ no HTTP exchange took place.                             │
-│ WG-TLS-001 │ hop:0   │ finding      │ high     │ The server certificate has expired.                      │
-│ WG-TLS-002 │ hop:0   │ inconclusive │ -        │ Not evaluated: the certificate could not be verified, so │
-│            │         │              │          │ no HTTP exchange took place.                             │
-└────────────┴─────────┴──────────────┴──────────┴──────────────────────────────────────────────────────────┘
-Status completed: 10 checks, 0 pass, 1 finding, 9 inconclusive, 0 error, 0 not applicable (high 1, medium 0, 
-low 0, informational 0)
-Target https://expired.webguard.test:8443/
-Report written: expired-cert\webguard_20261027T184949Z_fadaf5fb.json
-Report written: expired-cert\webguard_20261027T184949Z_fadaf5fb.html
-Exit 1: finding(s) at or above --fail-on high
+◆ WebGuard  v1.0.0  passive web security configuration audit
+╭─  Scan plan  ──────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Target      https://expired.webguard.test:8443/                                                            │
+│ Redirects   not followed                                                                                   │
+│ Deadline    30 s                                                                                           │
+│ Fail on     high and above                                                                                 │
+│ Reports     expired-cert                                                                                   │
+│ Authorized  ✔ confirmed by --i-am-authorized                                                               │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Results
+╭────────────────┬───────────────────────────────────────┬─────────┬──────────┬──────────────────────────────╮
+│ Status         │ Check                                 │ Subject │ Severity │ Details                      │
+├────────────────┼───────────────────────────────────────┼─────────┼──────────┼──────────────────────────────┤
+│ ✘ finding      │ WG-TLS-001                            │ hop:0   │  HIGH    │ The server certificate has   │
+│                │ Certificate verification              │         │          │ expired.                     │
+│ ? inconclusive │ WG-TLS-002                            │ hop:0   │ -        │ Not evaluated: the           │
+│                │ Certificate expiry horizon            │         │          │ certificate could not be     │
+│                │                                       │         │          │ verified, so no HTTP         │
+│                │                                       │         │          │ exchange took place.         │
+├────────────────┼───────────────────────────────────────┼─────────┼──────────┼──────────────────────────────┤
+│ ? inconclusive │ WG-HDR-001                            │ hop:0   │ -        │ Not evaluated: the           │
+│                │ HTTP Strict Transport Security (HSTS) │         │          │ certificate could not be     │
+│                │                                       │         │          │ verified, so no HTTP         │
+│                │                                       │         │          │ exchange took place.         │
+│ ? inconclusive │ WG-HDR-002                            │ hop:0   │ -        │ Not evaluated: the           │
+│                │ Content Security Policy (enforcing)   │         │          │ certificate could not be     │
+│                │                                       │         │          │ verified, so no HTTP         │
+│                │                                       │         │          │ exchange took place.         │
+│ ? inconclusive │ WG-HDR-003                            │ hop:0   │ -        │ Not evaluated: the           │
+│                │ X-Content-Type-Options                │         │          │ certificate could not be     │
+│                │                                       │         │          │ verified, so no HTTP         │
+│                │                                       │         │          │ exchange took place.         │
+├────────────────┼───────────────────────────────────────┼─────────┼──────────┼──────────────────────────────┤
+│ ? inconclusive │ WG-CK-001                             │ hop:0   │ -        │ Not evaluated: the           │
+│                │ Cookie Secure attribute               │         │          │ certificate could not be     │
+│                │                                       │         │          │ verified, so no HTTP         │
+│                │                                       │         │          │ exchange took place.         │
+│ ? inconclusive │ WG-CK-002                             │ hop:0   │ -        │ Not evaluated: the           │
+│                │ Cookie HttpOnly attribute             │         │          │ certificate could not be     │
+│                │                                       │         │          │ verified, so no HTTP         │
+│                │                                       │         │          │ exchange took place.         │
+│ ? inconclusive │ WG-CK-003                             │ hop:0   │ -        │ Not evaluated: the           │
+│                │ Cookie SameSite attribute             │         │          │ certificate could not be     │
+│                │                                       │         │          │ verified, so no HTTP         │
+│                │                                       │         │          │ exchange took place.         │
+│ ? inconclusive │ WG-CK-004                             │ hop:0   │ -        │ Not evaluated: the           │
+│                │ Cookie name prefixes                  │         │          │ certificate could not be     │
+│                │                                       │         │          │ verified, so no HTTP         │
+│                │                                       │         │          │ exchange took place.         │
+├────────────────┼───────────────────────────────────────┼─────────┼──────────┼──────────────────────────────┤
+│ ? inconclusive │ WG-RDR-001                            │ hop:0   │ -        │ Not evaluated: the           │
+│                │ Redirect downgrade to HTTP            │         │          │ certificate could not be     │
+│                │                                       │         │          │ verified, so no HTTP         │
+│                │                                       │         │          │ exchange took place.         │
+╰────────────────┴───────────────────────────────────────┴─────────┴──────────┴──────────────────────────────╯
+╭─  What to fix first  ──────────────────────────────────────────────────────────────────────────────────────╮
+│  HIGH  WG-TLS-001  The server certificate has expired.                                                     │
+│    → Serve a certificate that is currently valid, issued by a publicly trusted CA, covers the hostname,    │
+│    and is sent with its full intermediate chain.                                                           │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─  Summary  ────────────────────────────────────────────────────────────────────────────────────────────────╮
+│  COMPLETED   https://expired.webguard.test:8443/   1 request  |  0.0s                                      │
+│                                                                                                            │
+│ ✔ 0 pass    ✘ 1 finding    ? 9 inconclusive    ! 0 error    – 0 n/a    10 checks                           │
+│  HIGH  1 ■    MEDIUM  0     LOW  0     INFO  0                                                             │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─  Reports  ────────────────────────────────────────────────────────────────────────────────────────────────╮
+│  JSON   expired-cert\webguard_20261027T193433Z_babc7cb2.json                                               │
+│  HTML   expired-cert\webguard_20261027T193433Z_babc7cb2.html                                               │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+✘ Exit 1: finding(s) at or above --fail-on high
 (exit code 1)

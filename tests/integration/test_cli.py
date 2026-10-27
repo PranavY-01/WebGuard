@@ -111,7 +111,6 @@ def test_missing_authorization_is_exit_2(
         (["scan", "https://example.test/", "--proxy", "http://p"], 2),
         (["scan"], 2),
         (["bogus"], 2),
-        ([], 2),
     ],
 )
 def test_rejections_and_usage_errors(
@@ -120,6 +119,24 @@ def test_rejections_and_usage_errors(
     monkeypatch.chdir(tmp_path)
     assert main(argv) == code
     assert not (tmp_path / "reports").exists()  # D-23: no report for exit 2/3
+
+
+def test_no_arguments_shows_welcome_screen(
+    no_network: None, capsys: pytest.CaptureFixture[str]
+) -> None:
+    assert main([]) == 0
+    out = capsys.readouterr().out
+    for text in ("webguard scan URL --i-am-authorized", "Quick start", "authorized to assess"):
+        assert text in out
+
+
+def test_scan_plan_never_shows_query_values(
+    no_network: None, capsys: pytest.CaptureFixture[str]
+) -> None:
+    assert main(["scan", "http://example.test/?token=QUERYSECRET", "--i-am-authorized"]) == 3
+    captured = capsys.readouterr()
+    assert "QUERYSECRET" not in captured.out + captured.err
+    assert "?REDACTED" in captured.out
 
 
 def test_policy_rejection_names_address_class(

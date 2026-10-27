@@ -5,9 +5,9 @@
     "version": "1.0.0"
   },
   "scan": {
-    "scan_id": "cfd7baff9cee4fd786d6f4e9f45ecafc",
-    "started_at": "2026-10-27T18:49:49.382983Z",
-    "finished_at": "2026-10-27T18:49:49.404994Z",
+    "scan_id": "66aa43b2b3554bb08681288098d17dd3",
+    "started_at": "2026-10-27T19:34:33.470909Z",
+    "finished_at": "2026-10-27T19:34:33.491939Z",
     "status": "completed",
     "target": {
       "display_url_redacted": "https://webguard.test:8443/",

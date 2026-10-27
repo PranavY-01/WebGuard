@@ -12,6 +12,8 @@ HTTPS pages redirect to plain HTTP. It prints a summary and saves a JSON and an 
 
 **Full instructions: [User guide](docs/USER_GUIDE.md)**
 
+<p align="center"><img src="samples/cli-welcome.svg" alt="WebGuard welcome screen: gradient logo, commands and quick start" width="860"></p>
+
 Day 5 of the *7 Days – 7 Builds* series (after NetScope, TraceDNS, FileSift and AuthWatch).
 
 ## Install
@@ -34,31 +36,10 @@ $ webguard scan https://www.your-site.example/ --i-am-authorized
 
 Real output from a scan of WebGuard's local test server, whose page lacks its security headers:
 
-```text
-$ webguard scan https://webguard.test:8443/missing --i-am-authorized --fail-on medium --output findings
-                                              WebGuard results
-┌────────────┬─────────┬────────────────┬──────────┬────────────────────────────────────────────────────────┐
-│ Rule       │ Subject │ Status         │ Severity │ Message                                                │
-├────────────┼─────────┼────────────────┼──────────┼────────────────────────────────────────────────────────┤
-│ WG-CK-001  │ -       │ not_applicable │ -        │ No Set-Cookie headers were observed.                   │
-│ WG-CK-002  │ -       │ not_applicable │ -        │ No Set-Cookie headers were observed.                   │
-│ WG-CK-003  │ -       │ not_applicable │ -        │ No Set-Cookie headers were observed.                   │
-│ WG-CK-004  │ -       │ not_applicable │ -        │ No Set-Cookie headers were observed.                   │
-│ WG-HDR-001 │ hop:0   │ finding        │ medium   │ No Strict-Transport-Security header was returned.      │
-│ WG-HDR-002 │ hop:0   │ finding        │ low      │ No Content-Security-Policy header was returned.        │
-│ WG-HDR-003 │ hop:0   │ finding        │ low      │ No X-Content-Type-Options header was returned.         │
-│ WG-RDR-001 │ hop:0   │ not_applicable │ -        │ The response is not a redirect.                        │
-│ WG-TLS-001 │ hop:0   │ pass           │ -        │ The certificate chain and hostname verified against    │
-│            │         │                │          │ the trust store.                                       │
-│ WG-TLS-002 │ hop:0   │ pass           │ -        │ The certificate remains valid for more than 30 days.   │
-└────────────┴─────────┴────────────────┴──────────┴────────────────────────────────────────────────────────┘
-Status completed: 10 checks, 2 pass, 3 finding, 0 inconclusive, 0 error, 5 not applicable (high 0, medium 1,
-low 2, informational 0)
-Target https://webguard.test:8443/missing
-Report written: findings\webguard_20261027T184934Z_80ede724.json
-Report written: findings\webguard_20261027T184934Z_80ede724.html
-Exit 1: finding(s) at or above --fail-on medium
-```
+<p align="center"><img src="samples/cli-scan-findings.svg" alt="WebGuard scan output: scan plan, results table, what to fix first, summary, reports and exit code" width="860"></p>
+
+The same output as plain text is in [`samples/cli-scan-findings.txt`](samples/cli-scan-findings.txt). Run
+`webguard` with no arguments for the welcome screen, and `webguard scan --help` for every option.
 
 Each finding is explained, with how to fix it, in the [user guide](docs/USER_GUIDE.md#8-the-ten-checks-and-how-to-fix-them).
 More example output and complete sample reports are in [`samples/`](samples/).

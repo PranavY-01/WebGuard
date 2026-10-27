@@ -1,4 +1,4 @@
-"""Typer commands: scan, rules, version (Plan §19.1-§19.2).
+"""Typer commands: scan, rules, version, plus the welcome screen (Plan §19.1-§19.2).
 
 The CLI can only construct production wiring (D-15): PublicScopePolicy, the system resolver and
 the certifi CA bundle, via `build_production_egress`. No flag, environment variable or config
@@ -7,17 +7,19 @@ field weakens verification, destination policy, budgets or escaping (P7).
 
 from __future__ import annotations
 
+import platform
+from importlib.metadata import PackageNotFoundError
+from importlib.metadata import version as package_version
 from pathlib import Path
 from typing import Annotated
 
 import typer
-from rich.table import Table
-from rich.text import Text
 
 from webguard import __version__
 from webguard.app.orchestrator import ScanDeps, run_scan
 from webguard.cli.console import SafeConsole
 from webguard.cli.exitcodes import ExitCode, exit_reason, outcome_to_exit_code
+from webguard.cli.theme import apply_typer_theme
 from webguard.domain.budget import DEADLINE_DEFAULT_S, DEADLINE_MAX_S, DEADLINE_MIN_S
 from webguard.domain.config import ScanConfig
 from webguard.domain.enums import FailOn
@@ -26,17 +28,26 @@ from webguard.egress import build_production_egress
 from webguard.logging_setup import configure as configure_logging
 from webguard.rules.catalog import CATALOG
 
-AUTHORIZATION_MESSAGE = (
-    "WebGuard only scans systems you own or are authorized to assess. "
-    "Re-run with --i-am-authorized."
-)
+AUTHORIZATION_MESSAGE = "WebGuard only scans systems you own or are authorized to assess."
+AUTHORIZATION_HINT = "Re-run with --i-am-authorized."
+
+_REQUIRED = "Required"
+_BEHAVIOUR = "Scan behaviour"
+_OUTPUT = "Output"
+
+apply_typer_theme()
 
 app = typer.Typer(
     name="webguard",
-    help="Passive web security configuration auditor (TLS, security headers, cookies, redirects).",
+    help=(
+        "[bold bright_cyan]WebGuard[/] - passive web security configuration auditor.\n\n"
+        "Checks a site's TLS certificate, HSTS, CSP, X-Content-Type-Options, cookie flags and "
+        "redirect downgrades, then writes JSON and HTML reports."
+    ),
+    epilog="Run [bold bright_cyan]webguard[/] with no arguments for the welcome screen.",
     add_completion=False,
     pretty_exceptions_enable=False,
-    no_args_is_help=True,
+    rich_markup_mode="rich",
 )
 
 
@@ -44,20 +55,43 @@ def console() -> SafeConsole:
     return SafeConsole()
 
 
-@app.command()
+@app.callback(invoke_without_command=True)
+def root(ctx: typer.Context) -> None:
+    """Passive web security configuration auditor."""
+    if ctx.invoked_subcommand is None:
+        console().welcome(__version__)
+
+
+@app.command(
+    epilog=(
+        "[bold]Examples[/]\n\n"
+        "  [bright_cyan]webguard scan https://www.example.com/ --i-am-authorized[/]\n\n"
+        "  [bright_cyan]webguard scan https://example.com/ --i-am-authorized "
+        "--follow-redirects --fail-on medium --output ./reports[/]"
+    ),
+)
 def scan(
-    url: Annotated[str, typer.Argument(help="One https:// URL you are authorized to assess.")],
+    url: Annotated[
+        str,
+        typer.Argument(
+            help="One [bold]https://[/] URL you own or are authorized to assess.",
+            show_default=False,
+        ),
+    ],
     i_am_authorized: Annotated[
         bool,
         typer.Option(
             "--i-am-authorized",
-            help="Required. Confirms you own the target or are authorized to assess it.",
+            help="Confirms you own the target or are authorized to assess it.",
+            rich_help_panel=_REQUIRED,
         ),
     ] = False,
     follow_redirects: Annotated[
         bool,
         typer.Option(
-            "--follow-redirects", help="Follow up to 3 HTTPS-only redirects, each re-validated."
+            "--follow-redirects",
+            help="Follow up to 3 HTTPS-only redirects, each fully re-validated.",
+            rich_help_panel=_BEHAVIOUR,
         ),
     ] = False,
     deadline: Annotated[
@@ -66,7 +100,8 @@ def scan(
             "--deadline",
             min=DEADLINE_MIN_S,
             max=DEADLINE_MAX_S,
-            help=f"Overall scan deadline in seconds ({DEADLINE_MIN_S}-{DEADLINE_MAX_S}).",
+            help=f"Time limit for the whole scan in seconds ({DEADLINE_MIN_S}-{DEADLINE_MAX_S}).",
+            rich_help_panel=_BEHAVIOUR,
         ),
     ] = DEADLINE_DEFAULT_S,
     fail_on: Annotated[
@@ -74,23 +109,31 @@ def scan(
         typer.Option(
             "--fail-on",
             case_sensitive=True,
-            help="Exit 1 when a finding at or above this severity exists ('none' never does).",
+            help="Exit 1 when a finding at or above this severity exists; 'none' never does.",
+            rich_help_panel=_BEHAVIOUR,
         ),
     ] = FailOn.HIGH,
     output: Annotated[
         Path,
         typer.Option(
-            "--output", help="Report directory (created if its parent exists; never overwritten)."
+            "--output",
+            help="Report directory; created if its parent exists. Files are never overwritten.",
+            rich_help_panel=_OUTPUT,
         ),
     ] = Path("reports"),
     debug: Annotated[
-        bool, typer.Option("--debug", help="Verbose diagnostics on stderr (never secrets).")
+        bool,
+        typer.Option(
+            "--debug",
+            help="Diagnostics on stderr (never cookie, header or query values).",
+            rich_help_panel=_OUTPUT,
+        ),
     ] = False,
 ) -> int:
-    """Run one passive scan and write JSON and HTML reports."""
+    """Scan one site and write JSON and HTML reports."""
     out = console()
     if not i_am_authorized:
-        out.error(AUTHORIZATION_MESSAGE)
+        out.unauthorized(AUTHORIZATION_MESSAGE, AUTHORIZATION_HINT)
         return ExitCode.USAGE
     configure_logging(debug)
     config = ScanConfig(
@@ -101,39 +144,47 @@ def scan(
         output_dir=output,
         debug=debug,
     )
-    outcome = run_scan(config, ScanDeps(egress=build_production_egress()))
+    out.scan_plan(config, __version__)
+    with out.progress(enabled=not debug) as on_progress:
+        outcome = run_scan(
+            config, ScanDeps(egress=build_production_egress(), on_progress=on_progress)
+        )
     code = outcome_to_exit_code(outcome)
     reason = exit_reason(outcome, code)
     if outcome.rejection is not None:
-        details = [outcome.rejection.detail] if outcome.rejection.detail else []
-        out.error(f"Target rejected ({outcome.rejection.code}); nothing was sent.", *details)
-        out.info(f"Exit {int(code)}: {reason}")
+        out.rejection(outcome.rejection, int(code), reason)
         return code
     if outcome.sink_error is not None:
-        out.error(f"Report persistence failed ({outcome.sink_error}).")
+        out.persistence_error(outcome.sink_error)
     out.print_outcome(outcome, int(code), reason)
     return code
 
 
 @app.command()
 def rules() -> int:
-    """List the rule catalog. Makes no network connections."""
-    table = Table(title=Text("WebGuard rules"))
-    for column in ("ID", "Name", "Category", "Possible severities"):
-        table.add_column(Text(column))
-    for meta in CATALOG:
-        table.add_row(
-            Text(meta.rule_id),
-            Text(meta.title),
-            Text(meta.category.value),
-            Text(", ".join(s.value for s in meta.severities)),
-        )
-    console().out.print(table)
+    """List the ten checks. Makes no network connections."""
+    console().rules(CATALOG)
     return ExitCode.OK
+
+
+def _dependency_version(name: str) -> str:
+    try:
+        return package_version(name)
+    except PackageNotFoundError:
+        return "not installed"
 
 
 @app.command()
 def version() -> int:
-    """Print the tool and report schema versions."""
-    console().out.print(Text(f"WebGuard {__version__} (report schema {SCHEMA_VERSION})"))
+    """Show version, report schema and runtime details."""
+    console().version(
+        __version__,
+        SCHEMA_VERSION,
+        [
+            ("Python", f"{platform.python_implementation()} {platform.python_version()}"),
+            ("Platform", platform.platform(terse=True)),
+            ("Trust store", f"certifi {_dependency_version('certifi')}"),
+            ("HTTP stack", f"httpcore {_dependency_version('httpcore')} (HTTP/1.1 only)"),
+        ],
+    )
     return ExitCode.OK
