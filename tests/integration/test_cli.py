@@ -151,9 +151,20 @@ def test_policy_rejection_names_address_class(
 # --- help surface (§19.2: no other flags exist) -----------------------------------------------
 
 
-def test_scan_help_lists_exactly_the_allowed_flags(capsys: pytest.CaptureFixture[str]) -> None:
+# ANSI CSI sequences. Typer forces colour when GITHUB_ACTIONS / FORCE_COLOR / PY_COLORS is set,
+# and colours "-" and "-flag" separately, so help text must be stripped before matching flags.
+_ANSI = re.compile(chr(27) + r"\[[0-9;?]*[A-Za-z]")
+
+
+@pytest.mark.parametrize("force_colour", [False, True])
+def test_scan_help_lists_exactly_the_allowed_flags(
+    capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch, force_colour: bool
+) -> None:
+    import typer.rich_utils
+
+    monkeypatch.setattr(typer.rich_utils, "FORCE_TERMINAL", True if force_colour else None)
     assert main(["scan", "--help"]) == 0
-    flags = set(re.findall(r"--[a-z][a-z-]+", capsys.readouterr().out))
+    flags = set(re.findall(r"--[a-z][a-z-]+", _ANSI.sub("", capsys.readouterr().out)))
     assert flags == {
         "--i-am-authorized",
         "--follow-redirects",
