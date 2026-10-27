@@ -88,3 +88,18 @@ forbidden_modules =
     rich
     typer
 allow_indirect_imports = True
+
+[importlinter:contract:cli-egress-facade]
+name = cli reaches egress only through the public facade (build_production_egress)
+type = forbidden
+source_modules =
+    webguard.cli
+forbidden_modules =
+    webguard.egress.resolver
+    webguard.egress.backend
+    webguard.egress.stream
+    webguard.egress.tls_context
+    webguard.egress.exchange
+    webguard.egress.capture
+    webguard.egress.errors
+allow_indirect_imports = True

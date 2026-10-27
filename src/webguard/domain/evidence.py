@@ -32,6 +32,10 @@ CAPTURED_HEADERS: frozenset[str] = frozenset(
     }
 )
 
+# Set-Cookie and Location are captured into CookieEvidence / LocationEvidence only; their raw
+# values carry cookie values and query secrets, so they never enter the stored header map.
+STORED_HEADERS: frozenset[str] = CAPTURED_HEADERS - {"set-cookie", "location"}
+
 REDIRECT_STATUSES: frozenset[int] = frozenset({301, 302, 303, 307, 308})
 
 
@@ -108,9 +112,9 @@ class HttpEvidence(_Frozen):
     @field_validator("headers")
     @classmethod
     def _allowlisted(cls, value: dict[str, list[SafeText]]) -> dict[str, list[SafeText]]:
-        unexpected = set(value) - CAPTURED_HEADERS
+        unexpected = set(value) - STORED_HEADERS
         if unexpected:
-            raise ValueError("header outside the capture allowlist")
+            raise ValueError("header outside the stored-header allowlist")
         return value
 
     @property

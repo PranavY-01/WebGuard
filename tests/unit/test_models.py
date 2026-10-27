@@ -137,7 +137,7 @@ def test_s19_raw_control_chars_rejected_in_evidence_models() -> None:
     with pytest.raises(ValidationError):
         CookieEvidence(name="sid\x1b[2J", attributes_raw="")
     with pytest.raises(ValidationError):
-        http(headers={"location": ["/a" + chr(0x202E) + "b"]})
+        http(headers={"content-type": ["text/a" + chr(0x202E) + "b"]})
     with pytest.raises(ValidationError):
         result(Status.ERROR, message="x\r\ny")
 
@@ -145,9 +145,10 @@ def test_s19_raw_control_chars_rejected_in_evidence_models() -> None:
 # --- Evidence consistency ------------------------------------------------------------------
 
 
-def test_http_header_allowlist_enforced() -> None:
+@pytest.mark.parametrize("name", ["server", "set-cookie", "location", "Content-Type"])
+def test_http_header_allowlist_enforced(name: str) -> None:
     with pytest.raises(ValidationError):
-        http(headers={"server": ["nginx"]})
+        http(headers={name: ["v"]})
 
 
 def test_s09_model_http_requires_verified_tls() -> None:
