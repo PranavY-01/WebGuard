@@ -31,7 +31,7 @@ class RuleResult(BaseModel):
     status: Status
     severity: Severity | None = None
     confidence: Confidence | None = None
-    reason_code: str = Field(pattern=r"^[a-z0-9_:.-]{1,80}$")
+    reason_code: str = Field(pattern=r"^[A-Za-z0-9_:.-]{1,80}$")
     message: SafeText
     evidence: list[EvidenceItem] = Field(default_factory=list)
     remediation: str
