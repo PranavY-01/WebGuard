@@ -1,0 +1,61 @@
+$ webguard scan https://webguard.test:8443/missing --i-am-authorized --fail-on medium --output findings
+◆ WebGuard  v1.0.0  passive web security configuration audit
+╭─  Scan plan  ──────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Target      https://webguard.test:8443/missing                                                             │
+│ Redirects   not followed                                                                                   │
+│ Deadline    30 s                                                                                           │
+│ Fail on     medium and above                                                                               │
+│ Reports     findings                                                                                       │
+│ Authorized  ✔ confirmed by --i-am-authorized                                                               │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Results
+╭───────────┬───────────────────────────────────────┬─────────┬──────────┬───────────────────────────────────╮
+│ Status    │ Check                                 │ Subject │ Severity │ Details                           │
+├───────────┼───────────────────────────────────────┼─────────┼──────────┼───────────────────────────────────┤
+│ ✔ pass    │ WG-TLS-001                            │ hop:0   │ -        │ The certificate chain and         │
+│           │ Certificate verification              │         │          │ hostname verified against the     │
+│           │                                       │         │          │ trust store.                      │
+│ ✔ pass    │ WG-TLS-002                            │ hop:0   │ -        │ The certificate remains valid for │
+│           │ Certificate expiry horizon            │         │          │ more than 30 days.                │
+├───────────┼───────────────────────────────────────┼─────────┼──────────┼───────────────────────────────────┤
+│ ✘ finding │ WG-HDR-001                            │ hop:0   │  MEDIUM  │ No Strict-Transport-Security      │
+│           │ HTTP Strict Transport Security (HSTS) │         │          │ header was returned.              │
+│ ✘ finding │ WG-HDR-002                            │ hop:0   │  LOW     │ No Content-Security-Policy header │
+│           │ Content Security Policy (enforcing)   │         │          │ was returned.                     │
+│ ✘ finding │ WG-HDR-003                            │ hop:0   │  LOW     │ No X-Content-Type-Options header  │
+│           │ X-Content-Type-Options                │         │          │ was returned.                     │
+├───────────┼───────────────────────────────────────┼─────────┼──────────┼───────────────────────────────────┤
+│ – n/a     │ WG-CK-001                             │ -       │ -        │ No Set-Cookie headers were        │
+│           │ Cookie Secure attribute               │         │          │ observed.                         │
+│ – n/a     │ WG-CK-002                             │ -       │ -        │ No Set-Cookie headers were        │
+│           │ Cookie HttpOnly attribute             │         │          │ observed.                         │
+│ – n/a     │ WG-CK-003                             │ -       │ -        │ No Set-Cookie headers were        │
+│           │ Cookie SameSite attribute             │         │          │ observed.                         │
+│ – n/a     │ WG-CK-004                             │ -       │ -        │ No Set-Cookie headers were        │
+│           │ Cookie name prefixes                  │         │          │ observed.                         │
+├───────────┼───────────────────────────────────────┼─────────┼──────────┼───────────────────────────────────┤
+│ – n/a     │ WG-RDR-001                            │ hop:0   │ -        │ The response is not a redirect.   │
+│           │ Redirect downgrade to HTTP            │         │          │                                   │
+╰───────────┴───────────────────────────────────────┴─────────┴──────────┴───────────────────────────────────╯
+╭─  What to fix first  ──────────────────────────────────────────────────────────────────────────────────────╮
+│  MEDIUM  WG-HDR-001  No Strict-Transport-Security header was returned.                                     │
+│    → Send `Strict-Transport-Security: max-age=31536000; includeSubDomains` on every HTTPS response once    │
+│    all subdomains serve HTTPS.                                                                             │
+│  LOW  WG-HDR-002  No Content-Security-Policy header was returned.                                          │
+│    → Deploy an enforcing Content-Security-Policy; start from a restrictive default-src and iterate using a │
+│    report-only policy first.                                                                               │
+│  LOW  WG-HDR-003  No X-Content-Type-Options header was returned.                                           │
+│    → Send `X-Content-Type-Options: nosniff` on every response.                                             │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─  Summary  ────────────────────────────────────────────────────────────────────────────────────────────────╮
+│  COMPLETED   https://webguard.test:8443/missing   1 request  |  0.0s                                       │
+│                                                                                                            │
+│ ✔ 2 pass    ✘ 3 finding    ? 0 inconclusive    ! 0 error    – 5 n/a    10 checks                           │
+│  HIGH  0     MEDIUM  1 ■    LOW  2 ■■    INFO  0                                                           │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─  Reports  ────────────────────────────────────────────────────────────────────────────────────────────────╮
+│  JSON   findings\webguard_20261027T193433Z_147adc8f.json                                                   │
+│  HTML   findings\webguard_20261027T193433Z_147adc8f.html                                                   │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+✘ Exit 1: finding(s) at or above --fail-on medium
+(exit code 1)

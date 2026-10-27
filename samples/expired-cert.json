@@ -1,0 +1,287 @@
+{
+  "schema_version": "1.0",
+  "tool": {
+    "name": "WebGuard",
+    "version": "1.0.0"
+  },
+  "scan": {
+    "scan_id": "babc7cb208394939b5c65add0ee4fb08",
+    "started_at": "2026-10-27T19:34:33.741633Z",
+    "finished_at": "2026-10-27T19:34:33.755929Z",
+    "status": "completed",
+    "target": {
+      "display_url_redacted": "https://expired.webguard.test:8443/",
+      "host": "expired.webguard.test",
+      "port": 8443
+    },
+    "config": {
+      "follow_redirects": false,
+      "deadline_s": 30,
+      "fail_on": "high"
+    },
+    "notes": []
+  },
+  "hops": [
+    {
+      "index": 0,
+      "url_redacted": "https://expired.webguard.test:8443/",
+      "host": "expired.webguard.test",
+      "port": 8443,
+      "resolved_ips": [
+        "127.0.0.1"
+      ],
+      "connected_ip": "127.0.0.1",
+      "tls": {
+        "verified": false,
+        "verify_code": 10,
+        "verify_message": "certificate has expired",
+        "protocol_version": null,
+        "cert": null
+      },
+      "http": null,
+      "failure": null
+    }
+  ],
+  "results": [
+    {
+      "rule_id": "WG-CK-001",
+      "rule_version": 1,
+      "title": "Cookie Secure attribute",
+      "category": "cookies",
+      "subject": "hop:0",
+      "status": "inconclusive",
+      "severity": null,
+      "confidence": null,
+      "reason_code": "blocked_by:WG-TLS-001",
+      "message": "Not evaluated: the certificate could not be verified, so no HTTP exchange took place.",
+      "evidence": [],
+      "remediation": "Add the Secure attribute to every cookie set over HTTPS.",
+      "references": [
+        "https://datatracker.ietf.org/doc/html/rfc6265",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie",
+        "https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html"
+      ],
+      "limitations": []
+    },
+    {
+      "rule_id": "WG-CK-002",
+      "rule_version": 1,
+      "title": "Cookie HttpOnly attribute",
+      "category": "cookies",
+      "subject": "hop:0",
+      "status": "inconclusive",
+      "severity": null,
+      "confidence": null,
+      "reason_code": "blocked_by:WG-TLS-001",
+      "message": "Not evaluated: the certificate could not be verified, so no HTTP exchange took place.",
+      "evidence": [],
+      "remediation": "Add HttpOnly to cookies that scripts do not need, especially session identifiers.",
+      "references": [
+        "https://datatracker.ietf.org/doc/html/rfc6265",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie",
+        "https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html"
+      ],
+      "limitations": [
+        "Cookie purpose unknown."
+      ]
+    },
+    {
+      "rule_id": "WG-CK-003",
+      "rule_version": 1,
+      "title": "Cookie SameSite attribute",
+      "category": "cookies",
+      "subject": "hop:0",
+      "status": "inconclusive",
+      "severity": null,
+      "confidence": null,
+      "reason_code": "blocked_by:WG-TLS-001",
+      "message": "Not evaluated: the certificate could not be verified, so no HTTP exchange took place.",
+      "evidence": [],
+      "remediation": "Set SameSite=Lax or Strict unless cross-site delivery is required; SameSite=None requires Secure.",
+      "references": [
+        "https://datatracker.ietf.org/doc/html/rfc6265",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie",
+        "https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html"
+      ],
+      "limitations": [
+        "Cookie purpose unknown."
+      ]
+    },
+    {
+      "rule_id": "WG-CK-004",
+      "rule_version": 1,
+      "title": "Cookie name prefixes",
+      "category": "cookies",
+      "subject": "hop:0",
+      "status": "inconclusive",
+      "severity": null,
+      "confidence": null,
+      "reason_code": "blocked_by:WG-TLS-001",
+      "message": "Not evaluated: the certificate could not be verified, so no HTTP exchange took place.",
+      "evidence": [],
+      "remediation": "__Secure- cookies need Secure; __Host- cookies need Secure, Path=/ and no Domain.",
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#cookie_prefixes",
+        "https://datatracker.ietf.org/doc/html/rfc6265"
+      ],
+      "limitations": []
+    },
+    {
+      "rule_id": "WG-HDR-001",
+      "rule_version": 1,
+      "title": "HTTP Strict Transport Security (HSTS)",
+      "category": "headers",
+      "subject": "hop:0",
+      "status": "inconclusive",
+      "severity": null,
+      "confidence": null,
+      "reason_code": "blocked_by:WG-TLS-001",
+      "message": "Not evaluated: the certificate could not be verified, so no HTTP exchange took place.",
+      "evidence": [],
+      "remediation": "Send `Strict-Transport-Security: max-age=31536000; includeSubDomains` on every HTTPS response once all subdomains serve HTTPS.",
+      "references": [
+        "https://datatracker.ietf.org/doc/html/rfc6797",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security",
+        "https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Strict_Transport_Security_Cheat_Sheet.html"
+      ],
+      "limitations": [
+        "Only the first header instance is evaluated (RFC 6797 section 8.1).",
+        "includeSubDomains and preload are recorded as evidence, not graded."
+      ]
+    },
+    {
+      "rule_id": "WG-HDR-002",
+      "rule_version": 1,
+      "title": "Content Security Policy (enforcing)",
+      "category": "headers",
+      "subject": "hop:0",
+      "status": "inconclusive",
+      "severity": null,
+      "confidence": null,
+      "reason_code": "blocked_by:WG-TLS-001",
+      "message": "Not evaluated: the certificate could not be verified, so no HTTP exchange took place.",
+      "evidence": [],
+      "remediation": "Deploy an enforcing Content-Security-Policy; start from a restrictive default-src and iterate using a report-only policy first.",
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP",
+        "https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html"
+      ],
+      "limitations": [
+        "<meta> CSP not detectable without the body; policy quality not graded."
+      ]
+    },
+    {
+      "rule_id": "WG-HDR-003",
+      "rule_version": 1,
+      "title": "X-Content-Type-Options",
+      "category": "headers",
+      "subject": "hop:0",
+      "status": "inconclusive",
+      "severity": null,
+      "confidence": null,
+      "reason_code": "blocked_by:WG-TLS-001",
+      "message": "Not evaluated: the certificate could not be verified, so no HTTP exchange took place.",
+      "evidence": [],
+      "remediation": "Send `X-Content-Type-Options: nosniff` on every response.",
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options",
+        "https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html"
+      ],
+      "limitations": []
+    },
+    {
+      "rule_id": "WG-RDR-001",
+      "rule_version": 1,
+      "title": "Redirect downgrade to HTTP",
+      "category": "redirects",
+      "subject": "hop:0",
+      "status": "inconclusive",
+      "severity": null,
+      "confidence": null,
+      "reason_code": "blocked_by:WG-TLS-001",
+      "message": "Not evaluated: the certificate could not be verified, so no HTTP exchange took place.",
+      "evidence": [],
+      "remediation": "Redirect only to https:// URLs and enable HSTS so browsers never request HTTP.",
+      "references": [
+        "https://datatracker.ietf.org/doc/html/rfc9110#section-15.4",
+        "https://datatracker.ietf.org/doc/html/rfc6797",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Redirections"
+      ],
+      "limitations": []
+    },
+    {
+      "rule_id": "WG-TLS-001",
+      "rule_version": 1,
+      "title": "Certificate verification",
+      "category": "tls",
+      "subject": "hop:0",
+      "status": "finding",
+      "severity": "high",
+      "confidence": "high",
+      "reason_code": "expired",
+      "message": "The server certificate has expired.",
+      "evidence": [
+        {
+          "label": "verify_code",
+          "value": "10"
+        },
+        {
+          "label": "verify_message",
+          "value": "certificate has expired"
+        }
+      ],
+      "remediation": "Serve a certificate that is currently valid, issued by a publicly trusted CA, covers the hostname, and is sent with its full intermediate chain.",
+      "references": [
+        "https://datatracker.ietf.org/doc/html/rfc5280",
+        "https://datatracker.ietf.org/doc/html/rfc6125",
+        "https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Security_Cheat_Sheet.html"
+      ],
+      "limitations": [
+        "Trust is evaluated against the certifi CA bundle, which may differ from operating-system and browser trust stores."
+      ]
+    },
+    {
+      "rule_id": "WG-TLS-002",
+      "rule_version": 1,
+      "title": "Certificate expiry horizon",
+      "category": "tls",
+      "subject": "hop:0",
+      "status": "inconclusive",
+      "severity": null,
+      "confidence": null,
+      "reason_code": "blocked_by:WG-TLS-001",
+      "message": "Not evaluated: the certificate could not be verified, so no HTTP exchange took place.",
+      "evidence": [],
+      "remediation": "Renew the certificate before it expires; automate renewal and alert on short horizons.",
+      "references": [
+        "https://datatracker.ietf.org/doc/html/rfc5280#section-4.1.2.5",
+        "https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Security_Cheat_Sheet.html"
+      ],
+      "limitations": [
+        "Measured against the scan start time from this vantage point only."
+      ]
+    }
+  ],
+  "summary": {
+    "checks_total": 10,
+    "pass": 0,
+    "finding": 1,
+    "inconclusive": 9,
+    "error": 0,
+    "not_applicable": 0,
+    "findings_by_severity": {
+      "informational": 0,
+      "low": 0,
+      "medium": 0,
+      "high": 1
+    }
+  },
+  "limitations": [
+    "Passive configuration assessment; not a penetration test. Passing checks do not mean the site is secure.",
+    "Only the response status line and headers are inspected; the body is never read, so <meta> CSP and page content are not assessed.",
+    "TLS checks cover certificate verification and expiry only; protocol versions and cipher suites are not audited.",
+    "Trust is evaluated against the certifi CA bundle, which may differ from your operating system or browser trust store.",
+    "URL paths are reported as given and may contain tokens; query values are redacted.",
+    "Results describe one moment from one network vantage point."
+  ]
+}

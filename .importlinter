@@ -1,0 +1,119 @@
+[importlinter]
+root_package = webguard
+include_external_packages = True
+
+[importlinter:contract:domain-independent]
+name = domain imports nothing from webguard
+type = forbidden
+source_modules =
+    webguard.domain
+forbidden_modules =
+    webguard.policy
+    webguard.egress
+    webguard.rules
+    webguard.render
+    webguard.sink
+    webguard.app
+    webguard.cli
+
+[importlinter:contract:layers]
+name = Layered architecture (cli > app > egress|rules|render|sink > policy > domain)
+type = layers
+layers =
+    webguard.cli
+    webguard.app
+    webguard.egress | webguard.rules | webguard.render | webguard.sink
+    webguard.policy
+    webguard.domain
+
+[importlinter:contract:network-confined]
+name = Only webguard.egress may import socket, ssl, httpcore, h11, certifi
+type = forbidden
+source_modules =
+    webguard.domain
+    webguard.policy
+    webguard.rules
+    webguard.render
+    webguard.sink
+    webguard.app
+    webguard.cli
+forbidden_modules =
+    socket
+    ssl
+    httpcore
+    h11
+    certifi
+allow_indirect_imports = True
+
+[importlinter:contract:no-other-http-stacks]
+name = No alternative HTTP stacks or asyncio anywhere
+type = forbidden
+source_modules =
+    webguard
+forbidden_modules =
+    http
+    asyncio
+    pickle
+    subprocess
+allow_indirect_imports = True
+
+[importlinter:contract:jinja-confined]
+name = Only webguard.render may import jinja2
+type = forbidden
+source_modules =
+    webguard.domain
+    webguard.policy
+    webguard.egress
+    webguard.rules
+    webguard.sink
+    webguard.app
+    webguard.cli
+forbidden_modules =
+    jinja2
+    markupsafe
+allow_indirect_imports = True
+
+[importlinter:contract:rich-confined]
+name = Only webguard.cli may import rich or typer
+type = forbidden
+source_modules =
+    webguard.domain
+    webguard.policy
+    webguard.egress
+    webguard.rules
+    webguard.render
+    webguard.sink
+    webguard.app
+forbidden_modules =
+    rich
+    typer
+allow_indirect_imports = True
+
+[importlinter:contract:cli-egress-facade]
+name = cli reaches egress only through the public facade (build_production_egress)
+type = forbidden
+source_modules =
+    webguard.cli
+forbidden_modules =
+    webguard.egress.resolver
+    webguard.egress.backend
+    webguard.egress.stream
+    webguard.egress.tls_context
+    webguard.egress.exchange
+    webguard.egress.capture
+    webguard.egress.errors
+allow_indirect_imports = True
+
+[importlinter:contract:logging-setup-cli-only]
+name = Only webguard.cli configures logging
+type = forbidden
+source_modules =
+    webguard.domain
+    webguard.policy
+    webguard.egress
+    webguard.rules
+    webguard.render
+    webguard.sink
+    webguard.app
+forbidden_modules =
+    webguard.logging_setup

@@ -1,0 +1,57 @@
+$ webguard scan https://webguard.test:8443/ --i-am-authorized --output clean
+◆ WebGuard  v1.0.0  passive web security configuration audit
+╭─  Scan plan  ──────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Target      https://webguard.test:8443/                                                                    │
+│ Redirects   not followed                                                                                   │
+│ Deadline    30 s                                                                                           │
+│ Fail on     high and above                                                                                 │
+│ Reports     clean                                                                                          │
+│ Authorized  ✔ confirmed by --i-am-authorized                                                               │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Results
+╭────────┬───────────────────────────────────────┬──────────────────┬──────────┬─────────────────────────────╮
+│ Status │ Check                                 │ Subject          │ Severity │ Details                     │
+├────────┼───────────────────────────────────────┼──────────────────┼──────────┼─────────────────────────────┤
+│ ✔ pass │ WG-TLS-001                            │ hop:0            │ -        │ The certificate chain and   │
+│        │ Certificate verification              │                  │          │ hostname verified against   │
+│        │                                       │                  │          │ the trust store.            │
+│ ✔ pass │ WG-TLS-002                            │ hop:0            │ -        │ The certificate remains     │
+│        │ Certificate expiry horizon            │                  │          │ valid for more than 30      │
+│        │                                       │                  │          │ days.                       │
+├────────┼───────────────────────────────────────┼──────────────────┼──────────┼─────────────────────────────┤
+│ ✔ pass │ WG-HDR-001                            │ hop:0            │ -        │ HSTS is set with a max-age  │
+│        │ HTTP Strict Transport Security (HSTS) │                  │          │ of at least 180 days.       │
+│ ✔ pass │ WG-HDR-002                            │ hop:0            │ -        │ An enforcing                │
+│        │ Content Security Policy (enforcing)   │                  │          │ Content-Security-Policy     │
+│        │                                       │                  │          │ header is present.          │
+│ ✔ pass │ WG-HDR-003                            │ hop:0            │ -        │ X-Content-Type-Options is   │
+│        │ X-Content-Type-Options                │                  │          │ set to nosniff.             │
+├────────┼───────────────────────────────────────┼──────────────────┼──────────┼─────────────────────────────┤
+│ ✔ pass │ WG-CK-001                             │ cookie:sid@hop:0 │ -        │ The cookie is marked        │
+│        │ Cookie Secure attribute               │                  │          │ Secure.                     │
+│ ✔ pass │ WG-CK-002                             │ cookie:sid@hop:0 │ -        │ The cookie is marked        │
+│        │ Cookie HttpOnly attribute             │                  │          │ HttpOnly.                   │
+│ ✔ pass │ WG-CK-003                             │ cookie:sid@hop:0 │ -        │ SameSite is Strict or Lax.  │
+│        │ Cookie SameSite attribute             │                  │          │                             │
+│ – n/a  │ WG-CK-004                             │ cookie:sid@hop:0 │ -        │ The cookie name has no      │
+│        │ Cookie name prefixes                  │                  │          │ __Secure- or __Host-        │
+│        │                                       │                  │          │ prefix.                     │
+├────────┼───────────────────────────────────────┼──────────────────┼──────────┼─────────────────────────────┤
+│ – n/a  │ WG-RDR-001                            │ hop:0            │ -        │ The response is not a       │
+│        │ Redirect downgrade to HTTP            │                  │          │ redirect.                   │
+╰────────┴───────────────────────────────────────┴──────────────────┴──────────┴─────────────────────────────╯
+╭─  What to fix first  ──────────────────────────────────────────────────────────────────────────────────────╮
+│ ✔ No findings. These settings look right. A clean result does not mean the site is secure.                 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─  Summary  ────────────────────────────────────────────────────────────────────────────────────────────────╮
+│  COMPLETED   https://webguard.test:8443/   1 request  |  0.0s                                              │
+│                                                                                                            │
+│ ✔ 8 pass    ✘ 0 finding    ? 0 inconclusive    ! 0 error    – 2 n/a    10 checks                           │
+│  HIGH  0     MEDIUM  0     LOW  0     INFO  0                                                              │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─  Reports  ────────────────────────────────────────────────────────────────────────────────────────────────╮
+│  JSON   clean\webguard_20261027T193433Z_66aa43b2.json                                                      │
+│  HTML   clean\webguard_20261027T193433Z_66aa43b2.html                                                      │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+✔ Exit 0: scan completed; no finding at or above --fail-on high
+(exit code 0)

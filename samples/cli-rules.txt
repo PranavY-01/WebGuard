@@ -1,0 +1,21 @@
+$ webguard rules
+WebGuard checks
+╭────────────┬───────────────────────────────────────┬───────────┬───────────────────────╮
+│ ID         │ Check                                 │ Area      │ Finding severities    │
+├────────────┼───────────────────────────────────────┼───────────┼───────────────────────┤
+│ WG-TLS-001 │ Certificate verification              │ tls       │  HIGH                 │
+│ WG-TLS-002 │ Certificate expiry horizon            │ tls       │  MEDIUM   LOW         │
+├────────────┼───────────────────────────────────────┼───────────┼───────────────────────┤
+│ WG-HDR-001 │ HTTP Strict Transport Security (HSTS) │ headers   │  MEDIUM   LOW         │
+│ WG-HDR-002 │ Content Security Policy (enforcing)   │ headers   │  LOW                  │
+│ WG-HDR-003 │ X-Content-Type-Options                │ headers   │  LOW                  │
+├────────────┼───────────────────────────────────────┼───────────┼───────────────────────┤
+│ WG-CK-001  │ Cookie Secure attribute               │ cookies   │  MEDIUM               │
+│ WG-CK-002  │ Cookie HttpOnly attribute             │ cookies   │  LOW                  │
+│ WG-CK-003  │ Cookie SameSite attribute             │ cookies   │  MEDIUM   LOW   INFO  │
+│ WG-CK-004  │ Cookie name prefixes                  │ cookies   │  MEDIUM               │
+├────────────┼───────────────────────────────────────┼───────────┼───────────────────────┤
+│ WG-RDR-001 │ Redirect downgrade to HTTP            │ redirects │  MEDIUM               │
+╰────────────┴───────────────────────────────────────┴───────────┴───────────────────────╯
+Reason codes and fixes: docs/RULES.md and docs/USER_GUIDE.md (section 8)
+(exit code 0)

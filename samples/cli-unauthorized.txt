@@ -1,0 +1,8 @@
+$ webguard scan https://webguard.test/
+╭─  ▲ Authorization required  ───────────────────────────────────────────────────────────────────────────────╮
+│ WebGuard only scans systems you own or are authorized to assess.                                           │
+│ Re-run with --i-am-authorized.                                                                             │
+│                                                                                                            │
+│ $ webguard scan https://your-site.example/ --i-am-authorized                                               │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+(exit code 2)

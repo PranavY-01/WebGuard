@@ -1,0 +1,19 @@
+$ webguard scan https://127.0.0.1/ --i-am-authorized
+◆ WebGuard  v1.0.0  passive web security configuration audit
+╭─  Scan plan  ──────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Target      https://127.0.0.1/                                                                             │
+│ Redirects   not followed                                                                                   │
+│ Deadline    30 s                                                                                           │
+│ Fail on     high and above                                                                                 │
+│ Reports     reports                                                                                        │
+│ Authorized  ✔ confirmed by --i-am-authorized                                                               │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─  ✘ Target refused  ───────────────────────────────────────────────────────────────────────────────────────╮
+│ Reason  policy_prohibited_address                                                                          │
+│ Address loopback:127.0.0.1                                                                                 │
+│ Nothing was sent: no request was made to the target.                                                       │
+│ → WebGuard scans public addresses only. Private, loopback, link-local and reserved ranges are always       │
+│   refused.                                                                                                 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+▲ Exit 3: target rejected: policy_prohibited_address
+(exit code 3)

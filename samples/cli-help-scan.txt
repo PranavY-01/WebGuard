@@ -1,0 +1,39 @@
+$ webguard scan --help
+
+ Usage: webguard scan [OPTIONS] {url}
+
+ Scan one site and write JSON and HTML reports.
+
+┌─ Arguments ───────────────────────────────────────────────────────────────────────────────────────────────┐
+│ *    url      <str>  One https:// URL you own or are authorized to assess. [required]                     │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+┌─ Options ─────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ --help          Show this message and exit.                                                               │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+┌─ Required ────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ --i-am-authorized          Confirms you own the target or are authorized to assess it.                    │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+┌─ Scan behaviour ──────────────────────────────────────────────────────────────────────────────────────────┐
+│ --follow-redirects                                              Follow up to 3 HTTPS-only redirects, each │
+│                                                                 fully re-validated.                       │
+│ --deadline                <int range> [5<=x<=120]               Time limit for the whole scan in seconds  │
+│                                                                 (5-120).                                  │
+│                                                                 [default: 30]                             │
+│ --fail-on                 <none|informational|low|medium|high>  Exit 1 when a finding at or above this    │
+│                                                                 severity exists; 'none' never does.       │
+│                                                                 [default: high]                           │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+┌─ Output ──────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ --output        <path>  Report directory; created if its parent exists. Files are never overwritten.      │
+│                         [default: reports]                                                                │
+│ --debug                 Diagnostics on stderr (never cookie, header or query values).                     │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+ Examples
+
+ webguard scan https://www.example.com/ --i-am-authorized
+
+ webguard scan https://example.com/ --i-am-authorized --follow-redirects --fail-on medium --output ./reports
+
+
+(exit code 0)

@@ -1,0 +1,29 @@
+$ webguard
+
+  ██╗    ██╗███████╗██████╗  ██████╗ ██╗   ██╗ █████╗ ██████╗ ██████╗
+  ██║    ██║██╔════╝██╔══██╗██╔════╝ ██║   ██║██╔══██╗██╔══██╗██╔══██╗
+  ██║ █╗ ██║█████╗  ██████╔╝██║  ███╗██║   ██║███████║██████╔╝██║  ██║
+  ██║███╗██║██╔══╝  ██╔══██╗██║   ██║██║   ██║██╔══██║██╔══██╗██║  ██║
+  ╚███╔███╔╝███████╗██████╔╝╚██████╔╝╚██████╔╝██║  ██║██║  ██║██████╔╝
+   ╚══╝╚══╝ ╚══════╝╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝
+
+  ◆ WebGuard  v1.0.0  passive web security configuration audit
+
+  TLS certificate  ◆  HSTS / CSP / nosniff  ◆  cookie flags  ◆  redirect downgrades
+
+╭─  Commands  ───────────────────────────────────────────────────────────────────────────────────────────────╮
+│ webguard scan URL --i-am-authorized  Scan one https:// site you own or are authorized to assess            │
+│ webguard rules                       List the ten checks and their severities                              │
+│ webguard version                     Show version, schema and runtime details                              │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─  Quick start  ────────────────────────────────────────────────────────────────────────────────────────────╮
+│ $ webguard scan https://www.your-site.example/ --i-am-authorized                                           │
+│ $ webguard scan https://your-site.example/ --i-am-authorized --follow-redirects --fail-on medium           │
+│ $ webguard scan --help                                                                                     │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+ ▲ Only scan systems you own or are authorized to assess.
+   Passive checks: at most 4 GET requests, response headers only.
+   Run 'webguard COMMAND --help' for options  |  User guide: docs/USER_GUIDE.md
+
+(exit code 0)
