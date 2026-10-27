@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: ${{ matrix.os }} / py${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python: ["3.12", "3.13", "3.14"]
+    env:
+      UV_PYTHON: ${{ matrix.python }}
+      UV_MANAGED_PYTHON: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Install (locked)
+        run: uv sync --locked
+      - name: Ruff lint
+        run: uv run --locked ruff check
+      - name: Ruff format
+        run: uv run --locked ruff format --check
+      - name: Mypy (strict)
+        run: uv run --locked mypy --strict src/
+      - name: Import contracts
+        run: uv run --locked lint-imports
+      - name: Tests
+        run: uv run --locked pytest tests/unit tests/integration tests/security
+
+  audit:
+    name: pip-audit (locked runtime deps)
+    runs-on: ubuntu-latest
+    env:
+      UV_PYTHON: "3.13"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@v6
+      - name: Export hashed runtime requirements
+        run: uv export --locked --no-dev --no-emit-project --format requirements-txt -o requirements-audit.txt
+      - name: Audit
+        run: uvx --from pip-audit==2.10.1 pip-audit -r requirements-audit.txt --require-hashes --disable-pip --strict
