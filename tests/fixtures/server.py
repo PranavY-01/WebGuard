@@ -206,6 +206,8 @@ MALICIOUS = [
     (b"Content-Type", b"text/html\x9b2J \xe2\x80\xae-bidi"),
     (b"Set-Cookie", b"<img src=x>=" + SENTINEL.encode() + b"; Path=/\x9b31m"),
     (b"Strict-Transport-Security", b"max-age=1; %0d%0aX-Injected: 1"),
+    (b"Set-Cookie", b"[link=https://evil.test]a[/link]=v; Secure"),
+    (b"Set-Cookie", b"[bold red]B[/bold red]\x9b2J=v; Secure"),
 ]
 
 ROUTES: dict[str, Callable[[ssl.SSLSocket, dict[str, list[str]]], None]] = {

@@ -16,7 +16,7 @@ from datetime import UTC, datetime
 from webguard.app.assemble import AssemblyError, assemble_report
 from webguard.app.budget import ScanBudget
 from webguard.app.redirects import next_hop
-from webguard.app.state import Phase, Rejection, ScanStateMachine
+from webguard.app.state import Phase, Rejection, ScanOutcome, ScanStateMachine
 from webguard.domain.config import ScanConfig
 from webguard.domain.enums import FailureCode, ScanNote, ScanStatus
 from webguard.domain.evidence import HopEvidence, ScanEvidence
@@ -24,6 +24,8 @@ from webguard.domain.report import Report
 from webguard.domain.results import RuleResult
 from webguard.egress import EgressDeps, HopRequest, fetch_hop
 from webguard.policy.url import CanonicalTarget, UrlRejection, canonicalize_url
+from webguard.render.html_render import render_html
+from webguard.render.json_render import render_json
 from webguard.rules.catalog import (
     CATALOG,
     HOP_FAILED,
@@ -33,6 +35,7 @@ from webguard.rules.catalog import (
 )
 from webguard.rules.engine import evaluate_rule
 from webguard.rules.helpers import RuleContext, inconclusive
+from webguard.sink.writer import ReportFile, SinkError, report_basename, write_reports
 
 log = logging.getLogger("webguard.app")
 
@@ -196,7 +199,6 @@ def collect(config: ScanConfig, deps: ScanDeps) -> Collected:
     machine.to(Phase.VALIDATING)
     validated = _validate(config, deps)
     if isinstance(validated, Rejection):
-        machine.to(Phase.REJECTED)
         return Collected(machine=machine, rejection=validated)
     target = validated
 
@@ -206,7 +208,6 @@ def collect(config: ScanConfig, deps: ScanDeps) -> Collected:
     machine.to(Phase.FETCHING)
     fetched = _fetch(target, config, deps, budget)
     if isinstance(fetched, Rejection):
-        machine.to(Phase.REJECTED)
         return Collected(machine=machine, rejection=fetched)
     state = fetched
 
@@ -260,4 +261,54 @@ def collect(config: ScanConfig, deps: ScanDeps) -> Collected:
         status=status,
         internal_error=internal_error,
         interrupted=status is ScanStatus.INTERRUPTED,
+    )
+
+
+def run_scan(config: ScanConfig, deps: ScanDeps) -> ScanOutcome:
+    """Full pipeline: collect -> RENDERING -> WRITING -> DONE.
+
+    A report is written for every scan that passed validation (D-23). JSON is written first;
+    if HTML rendering fails, the JSON is still written and the outcome records the failure.
+    A KeyboardInterrupt while writing propagates; the sink removes its temporary files.
+    """
+    collected = collect(config, deps)
+    machine = collected.machine
+    if collected.rejection is not None:
+        return machine.reject(collected.rejection)
+    report = collected.report
+    if report is None:
+        return machine.finish(
+            status=collected.status,
+            report=None,
+            internal_error=True,
+            interrupted=collected.interrupted,
+        )
+
+    machine.to(Phase.RENDERING)
+    files = [ReportFile("json", render_json(report))]
+    render_error: str | None = None
+    try:
+        files.append(ReportFile("html", render_html(report)))
+    except Exception:  # reason: F-22 boundary; JSON is kept and the outcome forces exit 70
+        log.error("HTML rendering failed; JSON report only")
+        render_error = "template_error"
+
+    machine.to(Phase.WRITING)
+    sink_error: str | None = None
+    try:
+        paths = write_reports(
+            config.output_dir, report_basename(report.scan.started_at, report.scan.scan_id), files
+        )
+    except SinkError as exc:
+        sink_error = exc.code
+        paths = list(exc.written)
+        log.error("report persistence failed: %s", exc.code)
+    return machine.finish(
+        status=collected.status,
+        report=report,
+        internal_error=collected.internal_error or render_error is not None,
+        interrupted=collected.interrupted,
+        report_paths=tuple(paths),
+        sink_error=sink_error,
+        render_error=render_error,
     )

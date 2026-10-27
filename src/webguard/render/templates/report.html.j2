@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="{{ csp }}">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="light dark">
+<title>WebGuard report {{ report.scan.scan_id[:8] }}</title>
+<style>
+:root {
+  --bg: #ffffff; --fg: #1d2330; --muted: #5b6475; --line: #dde2ea; --panel: #f5f7fa;
+  --pass: #1f7a3d; --finding: #b3261e; --inconclusive: #8a6100; --error: #7b1fa2; --na: #5b6475;
+  --high: #b3261e; --medium: #c25e00; --low: #8a6100; --informational: #2f5fb3;
+  --banner-bg: #fff4d6; --banner-fg: #5a4300;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #12161d; --fg: #e6e9ef; --muted: #9aa3b2; --line: #2a313d; --panel: #1a2029;
+    --pass: #5fcf86; --finding: #ff8a80; --inconclusive: #f2c14e; --error: #ce93d8; --na: #9aa3b2;
+    --high: #ff8a80; --medium: #ffb74d; --low: #f2c14e; --informational: #8ab4f8;
+    --banner-bg: #3a3112; --banner-fg: #f6e3a6;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg);
+  font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+main { max-width: 1180px; margin: 0 auto; padding: 24px 16px 48px; }
+h1 { font-size: 22px; margin: 0 0 4px; }
+h2 { font-size: 17px; margin: 32px 0 12px; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+.meta { color: var(--muted); margin: 0; overflow-wrap: anywhere; }
+.banner { background: var(--banner-bg); color: var(--banner-fg); border-radius: 6px;
+  padding: 10px 14px; margin: 16px 0; font-weight: 600; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; }
+.card b { display: block; font-size: 22px; }
+.card span { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; vertical-align: top; padding: 7px 8px; border-bottom: 1px solid var(--line); }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+td { overflow-wrap: anywhere; }
+code, .mono { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12.5px; }
+.pill { display: inline-block; border-radius: 999px; padding: 0 8px; font-size: 12px; font-weight: 600;
+  border: 1px solid currentColor; white-space: nowrap; }
+.st-pass { color: var(--pass); } .st-finding { color: var(--finding); }
+.st-inconclusive { color: var(--inconclusive); } .st-error { color: var(--error); }
+.st-not_applicable { color: var(--na); }
+.sev-high { color: var(--high); } .sev-medium { color: var(--medium); }
+.sev-low { color: var(--low); } .sev-informational { color: var(--informational); }
+details { margin-top: 4px; } summary { cursor: pointer; color: var(--muted); }
+dl { display: grid; grid-template-columns: max-content 1fr; gap: 2px 10px; margin: 6px 0; }
+dt { color: var(--muted); } dd { margin: 0; overflow-wrap: anywhere; }
+ul { padding-left: 20px; }
+footer { color: var(--muted); margin-top: 32px; font-size: 12px; }
+@media print {
+  body { background: #fff; color: #000; }
+  details { display: block; } details > summary { display: none; }
+  .card, .banner { border: 1px solid #999; }
+}
+</style>
+</head>
+<body>
+<main>
+<h1>WebGuard report</h1>
+<p class="meta">Target <span class="mono">{{ report.scan.target.display_url_redacted }}</span>
+ &middot; status <strong>{{ report.scan.status.value }}</strong></p>
+<p class="meta">Scan <span class="mono">{{ report.scan.scan_id }}</span>
+ &middot; started {{ report.scan.started_at.strftime("%Y-%m-%d %H:%M:%S") }} UTC
+ &middot; finished {{ report.scan.finished_at.strftime("%Y-%m-%d %H:%M:%S") }} UTC
+ &middot; {{ report.tool.name }} {{ report.tool.version }} (schema {{ report.schema_version }})</p>
+
+<div class="banner" role="note">{{ banner }}</div>
+
+<h2>Summary</h2>
+<div class="cards">
+  <div class="card"><span>Checks</span><b>{{ report.summary.checks_total }}</b></div>
+  <div class="card st-pass"><span>Pass</span><b>{{ report.summary.pass_ }}</b></div>
+  <div class="card st-finding"><span>Findings</span><b>{{ report.summary.finding }}</b></div>
+  <div class="card st-inconclusive"><span>Inconclusive</span><b>{{ report.summary.inconclusive }}</b></div>
+  <div class="card st-error"><span>Error</span><b>{{ report.summary.error }}</b></div>
+  <div class="card st-not_applicable"><span>Not applicable</span><b>{{ report.summary.not_applicable }}</b></div>
+</div>
+<p class="meta">Findings by severity:
+ high {{ report.summary.findings_by_severity.high }},
+ medium {{ report.summary.findings_by_severity.medium }},
+ low {{ report.summary.findings_by_severity.low }},
+ informational {{ report.summary.findings_by_severity.informational }}.
+ Configuration: follow redirects {{ "on" if report.scan.config.follow_redirects else "off" }},
+ deadline {{ report.scan.config.deadline_s }} s, fail-on {{ report.scan.config.fail_on.value }}.</p>
+{% if report.scan.notes %}
+<p class="meta">Notes:
+{% for note in report.scan.notes %}<code>{{ note.value }}</code>{% if not loop.last %}, {% endif %}{% endfor %}</p>
+{% endif %}
+
+<h2>Results</h2>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Rule</th><th>Subject</th><th>Status</th><th>Severity</th><th>Details</th></tr></thead>
+<tbody>
+{% for r in report.results %}
+<tr>
+  <td><code>{{ r.rule_id }}</code><br>{{ r.title }}</td>
+  <td class="mono">{{ r.subject or "-" }}</td>
+  <td><span class="pill st-{{ r.status.value }}">{{ r.status.value }}</span></td>
+  <td>{% if r.severity %}<span class="pill sev-{{ r.severity.value }}">{{ r.severity.value }}</span>
+      <br><span class="meta">confidence {{ r.confidence.value }}</span>
+      {% elif r.confidence %}<span class="meta">confidence {{ r.confidence.value }}</span>{% else %}-{% endif %}</td>
+  <td>{{ r.message }}
+    <details>
+      <summary>evidence, remediation, references</summary>
+      <dl>
+        <dt>reason</dt><dd><code>{{ r.reason_code }}</code></dd>
+        {% for item in r.evidence %}<dt>{{ item.label }}</dt><dd class="mono">{{ item.value }}</dd>{% endfor %}
+        <dt>remediation</dt><dd>{{ r.remediation }}</dd>
+        {% for ref in r.references %}<dt>reference</dt><dd class="mono">{{ ref }}</dd>{% endfor %}
+        {% for lim in r.limitations %}<dt>limitation</dt><dd>{{ lim }}</dd>{% endfor %}
+      </dl>
+    </details>
+  </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+
+<h2>Per-hop evidence</h2>
+{% if hops %}
+<div class="table-wrap">
+<table>
+<thead><tr><th>#</th><th>URL (query redacted)</th><th>Addresses</th><th>TLS</th><th>Certificate</th><th>HTTP</th><th>Outcome</th></tr></thead>
+<tbody>
+{% for h in hops %}
+<tr>
+  <td>{{ h.index }}</td>
+  <td class="mono">{{ h.url }}</td>
+  <td class="mono">{{ h.endpoint }}<br>resolved {{ h.resolved }}<br>connected {{ h.connected }}</td>
+  <td>{{ h.tls }}</td>
+  <td>{{ h.certificate }}</td>
+  <td>{{ h.http }}</td>
+  <td class="mono">{{ h.outcome }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+{% else %}
+<p class="meta">No request completed.</p>
+{% endif %}
+
+<h2>Limitations</h2>
+<ul>
+{% for item in report.limitations %}<li>{{ item }}</li>
+{% endfor %}
+</ul>
+
+<footer>Generated by {{ report.tool.name }} {{ report.tool.version }}. Scan ID {{ report.scan.scan_id }}.
+References are listed as text; this file loads no external resources and runs no scripts.</footer>
+</main>
+</body>
+</html>
