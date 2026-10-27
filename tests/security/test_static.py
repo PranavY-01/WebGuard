@@ -31,7 +31,7 @@ S12_PATTERNS = [
     r"_create_unverified_context",
     r"create_default_context",  # reads SSLKEYLOGFILE from the environment (P0 finding)
     r"verify\s*=\s*False",
-    r"follow_redirects",
+    r"allow_redirects",
     r"trust_env",
     r"shell\s*=\s*True",
     r"\beval\(",
@@ -40,9 +40,7 @@ S12_PATTERNS = [
     r"os\.replace\(",
     r"shutil\.move\(",
     r"SimpleCookie",
-    r"\bhttpx\b",
-    r"\brequests\b",
-    r"\baiohttp\b",
+    r"^\s*(import|from)\s+(httpx|requests|aiohttp|urllib3)\b",
     r"urllib\.request",
     r"http\.client",
 ]
@@ -179,3 +177,49 @@ def test_no_fstring_or_format_in_log_calls() -> None:
                 where = f"{p.relative_to(SRC)}:{node.lineno} log message must be a static string"
                 assert isinstance(first, ast.Constant), where
                 assert isinstance(first.value, str), where
+
+
+def test_s12_no_http_library_redirect_following() -> None:
+    """`follow_redirects` may only appear as WebGuard's own config field, never as an HTTP kwarg."""
+    allowed_callers = {"ScanConfig", "ConfigInfo"}
+    for p in _py_files(SRC):
+        for node in ast.walk(ast.parse(p.read_text(encoding="utf-8"))):
+            if isinstance(node, ast.Call) and any(
+                k.arg == "follow_redirects" for k in node.keywords
+            ):
+                callee = ast.unparse(node.func).rsplit(".", 1)[-1]
+                assert callee in allowed_callers, f"{p.relative_to(SRC)}:{node.lineno}"
+
+
+# Trojan-Source guard: no invisible, bidi or control characters in any source or template file.
+_INVISIBLE_RANGES = (
+    (0x0000, 0x0008),
+    (0x000B, 0x000C),
+    (0x000E, 0x001F),
+    (0x007F, 0x009F),
+    (0x061C, 0x061C),
+    (0x200B, 0x200F),
+    (0x2028, 0x202E),
+    (0x2060, 0x2064),
+    (0x2066, 0x2069),
+    (0xFEFF, 0xFEFF),
+)
+
+
+def test_no_invisible_chars_in_source() -> None:
+    root = SRC.parents[1]
+    files = [
+        p
+        for base in (root / "src", root / "tests", root / "docs")
+        if base.exists()
+        for p in base.rglob("*")
+        if p.is_file() and p.suffix in {".py", ".j2", ".html", ".md", ".toml"}
+    ]
+    hits = [
+        f"{p.relative_to(root)}:{n}:U+{ord(ch):04X}"
+        for p in files
+        for n, line in enumerate(p.read_text(encoding="utf-8").splitlines(), 1)
+        for ch in line
+        if any(lo <= ord(ch) <= hi for lo, hi in _INVISIBLE_RANGES)
+    ]
+    assert hits == [], hits
