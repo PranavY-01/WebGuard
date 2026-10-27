@@ -23,7 +23,8 @@ classifiers = [
 dependencies = [
     "httpcore>=1.0.9,<2",
     "h11>=0.16,<1",
-    "certifi>=2025.1.31",
+    # >= 2026.10.19: drops the compromised emSign intermediates chain (GHSA-6q48-6c7w-9gw2).
+    "certifi>=2026.10.19",
     "idna>=3.10,<4",
     "pydantic>=2.11,<3",
     "typer>=0.16,<1",
@@ -52,8 +53,10 @@ dev = [
 packages = ["src/webguard"]
 
 [tool.uv]
-# Never pick a release younger than two weeks (supply-chain cooling-off).
+# Never pick a release younger than two weeks (supply-chain cooling-off) ...
 exclude-newer = "2026-10-13T00:00:00Z"
+# ... except certifi, whose trust-store security fix (GHSA-6q48-6c7w-9gw2) is newer than that.
+exclude-newer-package = { certifi = "2026-10-27T00:00:00Z" }
 
 [tool.ruff]
 line-length = 100

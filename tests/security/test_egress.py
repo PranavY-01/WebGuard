@@ -578,3 +578,13 @@ def test_env_var_not_read_for_ca(monkeypatch: pytest.MonkeyPatch, pki: FixturePk
     ctx = build_ssl_context(EgressConfig(ca_file=Path(certifi.where()), user_agent=USER_AGENT))
     subjects = {str(c.get("subject")) for c in ctx.get_ca_certs()}
     assert not any("Testing CA" in s for s in subjects)
+
+
+def test_trust_store_excludes_compromised_emsign_chain() -> None:
+    """GHSA-6q48-6c7w-9gw2: certifi < 2026.10.19 trusts a root whose intermediates' keys leaked."""
+    from importlib.metadata import version
+
+    year, month, day = (int(part) for part in version("certifi").split(".")[:3])
+    assert (year, month, day) >= (2026, 10, 19)
+    bundle = Path(certifi.where()).read_text(encoding="ascii", errors="replace")
+    assert "emSign ECC Root CA - G3" not in bundle
