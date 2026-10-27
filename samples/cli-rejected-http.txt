@@ -1,0 +1,4 @@
+$ webguard scan http://webguard.test/ --i-am-authorized
+Target rejected (scheme_not_https); nothing was sent.
+Exit 3: target rejected: scheme_not_https
+(exit code 3)

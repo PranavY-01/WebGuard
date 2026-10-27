@@ -1,0 +1,17 @@
+$ webguard rules
+                                        WebGuard rules                                         
+┌────────────┬───────────────────────────────────────┬───────────┬────────────────────────────┐
+│ ID         │ Name                                  │ Category  │ Possible severities        │
+├────────────┼───────────────────────────────────────┼───────────┼────────────────────────────┤
+│ WG-CK-001  │ Cookie Secure attribute               │ cookies   │ medium                     │
+│ WG-CK-002  │ Cookie HttpOnly attribute             │ cookies   │ low                        │
+│ WG-CK-003  │ Cookie SameSite attribute             │ cookies   │ informational, low, medium │
+│ WG-CK-004  │ Cookie name prefixes                  │ cookies   │ medium                     │
+│ WG-HDR-001 │ HTTP Strict Transport Security (HSTS) │ headers   │ low, medium                │
+│ WG-HDR-002 │ Content Security Policy (enforcing)   │ headers   │ low                        │
+│ WG-HDR-003 │ X-Content-Type-Options                │ headers   │ low                        │
+│ WG-RDR-001 │ Redirect downgrade to HTTP            │ redirects │ medium                     │
+│ WG-TLS-001 │ Certificate verification              │ tls       │ high                       │
+│ WG-TLS-002 │ Certificate expiry horizon            │ tls       │ low, medium                │
+└────────────┴───────────────────────────────────────┴───────────┴────────────────────────────┘
+(exit code 0)

@@ -223,3 +223,10 @@ def test_no_invisible_chars_in_source() -> None:
         if any(lo <= ord(ch) <= hi for lo, hi in _INVISIBLE_RANGES)
     ]
     assert hits == [], hits
+
+
+def test_threat_model_covers_register() -> None:
+    """G-11: THREAT_MODEL.md lists every plan threat T-01..T-28 (it may add more)."""
+    doc = (SRC.parents[1] / "docs" / "THREAT_MODEL.md").read_text(encoding="utf-8")
+    listed = set(re.findall(r"^\| (T-\d{2}) \|", doc, flags=re.MULTILINE))
+    assert {f"T-{n:02d}" for n in range(1, 29)} <= listed

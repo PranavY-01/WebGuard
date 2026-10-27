@@ -1,0 +1,28 @@
+$ webguard scan https://webguard.test:8443/ --i-am-authorized --output clean
+                                              WebGuard results                                               
+┌────────────┬──────────────────┬────────────────┬──────────┬───────────────────────────────────────────────┐
+│ Rule       │ Subject          │ Status         │ Severity │ Message                                       │
+├────────────┼──────────────────┼────────────────┼──────────┼───────────────────────────────────────────────┤
+│ WG-CK-001  │ cookie:sid@hop:0 │ pass           │ -        │ The cookie is marked Secure.                  │
+│ WG-CK-002  │ cookie:sid@hop:0 │ pass           │ -        │ The cookie is marked HttpOnly.                │
+│ WG-CK-003  │ cookie:sid@hop:0 │ pass           │ -        │ SameSite is Strict or Lax.                    │
+│ WG-CK-004  │ cookie:sid@hop:0 │ not_applicable │ -        │ The cookie name has no __Secure- or __Host-   │
+│            │                  │                │          │ prefix.                                       │
+│ WG-HDR-001 │ hop:0            │ pass           │ -        │ HSTS is set with a max-age of at least 180    │
+│            │                  │                │          │ days.                                         │
+│ WG-HDR-002 │ hop:0            │ pass           │ -        │ An enforcing Content-Security-Policy header   │
+│            │                  │                │          │ is present.                                   │
+│ WG-HDR-003 │ hop:0            │ pass           │ -        │ X-Content-Type-Options is set to nosniff.     │
+│ WG-RDR-001 │ hop:0            │ not_applicable │ -        │ The response is not a redirect.               │
+│ WG-TLS-001 │ hop:0            │ pass           │ -        │ The certificate chain and hostname verified   │
+│            │                  │                │          │ against the trust store.                      │
+│ WG-TLS-002 │ hop:0            │ pass           │ -        │ The certificate remains valid for more than   │
+│            │                  │                │          │ 30 days.                                      │
+└────────────┴──────────────────┴────────────────┴──────────┴───────────────────────────────────────────────┘
+Status completed: 10 checks, 8 pass, 0 finding, 0 inconclusive, 0 error, 2 not applicable (high 0, medium 0, 
+low 0, informational 0)
+Target https://webguard.test:8443/
+Report written: clean\webguard_20261027T184949Z_cfd7baff.json
+Report written: clean\webguard_20261027T184949Z_cfd7baff.html
+Exit 0: scan completed; no finding at or above --fail-on high
+(exit code 0)

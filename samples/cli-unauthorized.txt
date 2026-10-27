@@ -1,0 +1,3 @@
+$ webguard scan https://webguard.test/
+WebGuard only scans systems you own or are authorized to assess. Re-run with --i-am-authorized.
+(exit code 2)

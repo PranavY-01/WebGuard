@@ -1,0 +1,3 @@
+$ webguard version
+WebGuard 1.0.0 (report schema 1.0)
+(exit code 0)

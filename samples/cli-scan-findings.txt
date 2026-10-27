@@ -1,0 +1,24 @@
+$ webguard scan https://webguard.test:8443/missing --i-am-authorized --fail-on medium --output findings
+                                              WebGuard results                                               
+┌────────────┬─────────┬────────────────┬──────────┬────────────────────────────────────────────────────────┐
+│ Rule       │ Subject │ Status         │ Severity │ Message                                                │
+├────────────┼─────────┼────────────────┼──────────┼────────────────────────────────────────────────────────┤
+│ WG-CK-001  │ -       │ not_applicable │ -        │ No Set-Cookie headers were observed.                   │
+│ WG-CK-002  │ -       │ not_applicable │ -        │ No Set-Cookie headers were observed.                   │
+│ WG-CK-003  │ -       │ not_applicable │ -        │ No Set-Cookie headers were observed.                   │
+│ WG-CK-004  │ -       │ not_applicable │ -        │ No Set-Cookie headers were observed.                   │
+│ WG-HDR-001 │ hop:0   │ finding        │ medium   │ No Strict-Transport-Security header was returned.      │
+│ WG-HDR-002 │ hop:0   │ finding        │ low      │ No Content-Security-Policy header was returned.        │
+│ WG-HDR-003 │ hop:0   │ finding        │ low      │ No X-Content-Type-Options header was returned.         │
+│ WG-RDR-001 │ hop:0   │ not_applicable │ -        │ The response is not a redirect.                        │
+│ WG-TLS-001 │ hop:0   │ pass           │ -        │ The certificate chain and hostname verified against    │
+│            │         │                │          │ the trust store.                                       │
+│ WG-TLS-002 │ hop:0   │ pass           │ -        │ The certificate remains valid for more than 30 days.   │
+└────────────┴─────────┴────────────────┴──────────┴────────────────────────────────────────────────────────┘
+Status completed: 10 checks, 2 pass, 3 finding, 0 inconclusive, 0 error, 5 not applicable (high 0, medium 1, 
+low 2, informational 0)
+Target https://webguard.test:8443/missing
+Report written: findings\webguard_20261027T184949Z_426340ed.json
+Report written: findings\webguard_20261027T184949Z_426340ed.html
+Exit 1: finding(s) at or above --fail-on medium
+(exit code 1)

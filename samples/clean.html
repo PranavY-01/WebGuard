@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src &#39;none&#39;; style-src &#39;unsafe-inline&#39;; img-src data:">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="light dark">
+<title>WebGuard report cfd7baff</title>
+<style>
+:root {
+  --bg: #ffffff; --fg: #1d2330; --muted: #5b6475; --line: #dde2ea; --panel: #f5f7fa;
+  --pass: #1f7a3d; --finding: #b3261e; --inconclusive: #8a6100; --error: #7b1fa2; --na: #5b6475;
+  --high: #b3261e; --medium: #c25e00; --low: #8a6100; --informational: #2f5fb3;
+  --banner-bg: #fff4d6; --banner-fg: #5a4300;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #12161d; --fg: #e6e9ef; --muted: #9aa3b2; --line: #2a313d; --panel: #1a2029;
+    --pass: #5fcf86; --finding: #ff8a80; --inconclusive: #f2c14e; --error: #ce93d8; --na: #9aa3b2;
+    --high: #ff8a80; --medium: #ffb74d; --low: #f2c14e; --informational: #8ab4f8;
+    --banner-bg: #3a3112; --banner-fg: #f6e3a6;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg);
+  font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+main { max-width: 1180px; margin: 0 auto; padding: 24px 16px 48px; }
+h1 { font-size: 22px; margin: 0 0 4px; }
+h2 { font-size: 17px; margin: 32px 0 12px; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+.meta { color: var(--muted); margin: 0; overflow-wrap: anywhere; }
+.banner { background: var(--banner-bg); color: var(--banner-fg); border-radius: 6px;
+  padding: 10px 14px; margin: 16px 0; font-weight: 600; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; }
+.card b { display: block; font-size: 22px; }
+.card span { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; vertical-align: top; padding: 7px 8px; border-bottom: 1px solid var(--line); }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+td { overflow-wrap: anywhere; }
+code, .mono { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12.5px; }
+.pill { display: inline-block; border-radius: 999px; padding: 0 8px; font-size: 12px; font-weight: 600;
+  border: 1px solid currentColor; white-space: nowrap; }
+.st-pass { color: var(--pass); } .st-finding { color: var(--finding); }
+.st-inconclusive { color: var(--inconclusive); } .st-error { color: var(--error); }
+.st-not_applicable { color: var(--na); }
+.sev-high { color: var(--high); } .sev-medium { color: var(--medium); }
+.sev-low { color: var(--low); } .sev-informational { color: var(--informational); }
+details { margin-top: 4px; } summary { cursor: pointer; color: var(--muted); }
+dl { display: grid; grid-template-columns: max-content 1fr; gap: 2px 10px; margin: 6px 0; }
+dt { color: var(--muted); } dd { margin: 0; overflow-wrap: anywhere; }
+ul { padding-left: 20px; }
+footer { color: var(--muted); margin-top: 32px; font-size: 12px; }
+@media print {
+  body { background: #fff; color: #000; }
+  details { display: block; } details > summary { display: none; }
+  .card, .banner { border: 1px solid #999; }
+}
+</style>
+</head>
+<body>
+<main>
+<h1>WebGuard report</h1>
+<p class="meta">Target <span class="mono">https://webguard.test:8443/</span>
+ &middot; status <strong>completed</strong></p>
+<p class="meta">Scan <span class="mono">cfd7baff9cee4fd786d6f4e9f45ecafc</span>
+ &middot; started 2026-10-27 18:49:49 UTC
+ &middot; finished 2026-10-27 18:49:49 UTC
+ &middot; WebGuard 1.0.0 (schema 1.0)</p>
+
+<div class="banner" role="note">Passive configuration assessment — not a penetration test; passing checks do not mean the site is secure.</div>
+
+<h2>Summary</h2>
+<div class="cards">
+  <div class="card"><span>Checks</span><b>10</b></div>
+  <div class="card st-pass"><span>Pass</span><b>8</b></div>
+  <div class="card st-finding"><span>Findings</span><b>0</b></div>
+  <div class="card st-inconclusive"><span>Inconclusive</span><b>0</b></div>
+  <div class="card st-error"><span>Error</span><b>0</b></div>
+  <div class="card st-not_applicable"><span>Not applicable</span><b>2</b></div>
+</div>
+<p class="meta">Findings by severity:
+ high 0,
+ medium 0,
+ low 0,
+ informational 0.
+ Configuration: follow redirects off,
+ deadline 30 s, fail-on high.</p>
+
+<h2>Results</h2>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Rule</th><th>Subject</th><th>Status</th><th>Severity</th><th>Details</th></tr></thead>
+<tbody>
+<tr>
+  <td><code>WG-CK-001</code><br>Cookie Secure attribute</td>
+  <td class="mono">cookie:sid@hop:0</td>
+  <td><span class="pill st-pass">pass</span></td>
+  <td><span class="meta">confidence high</span></td>
+  <td>The cookie is marked Secure.
+    <details>
+      <summary>evidence, remediation, references</summary>
+      <dl>
+        <dt>reason</dt><dd><code>secure_present</code></dd>
+<dt>attributes</dt><dd class="mono">Secure; HttpOnly; SameSite=Lax; Path=/</dd>        <dt>remediation</dt><dd>Add the Secure attribute to every cookie set over HTTPS.</dd>
+<dt>reference</dt><dd class="mono">https://datatracker.ietf.org/doc/html/rfc6265</dd><dt>reference</dt><dd class="mono">https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie</dd><dt>reference</dt><dd class="mono">https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html</dd>      </dl>
+    </details>
+  </td>
+</tr>
+<tr>
+  <td><code>WG-CK-002</code><br>Cookie HttpOnly attribute</td>
+  <td class="mono">cookie:sid@hop:0</td>
+  <td><span class="pill st-pass">pass</span></td>
+  <td><span class="meta">confidence high</span></td>
+  <td>The cookie is marked HttpOnly.
+    <details>
+      <summary>evidence, remediation, references</summary>
+      <dl>
+        <dt>reason</dt><dd><code>httponly_present</code></dd>
+<dt>attributes</dt><dd class="mono">Secure; HttpOnly; SameSite=Lax; Path=/</dd>        <dt>remediation</dt><dd>Add HttpOnly to cookies that scripts do not need, especially session identifiers.</dd>
+<dt>reference</dt><dd class="mono">https://datatracker.ietf.org/doc/html/rfc6265</dd><dt>reference</dt><dd class="mono">https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie</dd><dt>reference</dt><dd class="mono">https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html</dd><dt>limitation</dt><dd>Cookie purpose unknown.</dd>      </dl>
+    </details>
+  </td>
+</tr>
+<tr>
+  <td><code>WG-CK-003</code><br>Cookie SameSite attribute</td>
+  <td class="mono">cookie:sid@hop:0</td>
+  <td><span class="pill st-pass">pass</span></td>
+  <td><span class="meta">confidence high</span></td>
+  <td>SameSite is Strict or Lax.
+    <details>
+      <summary>evidence, remediation, references</summary>
+      <dl>
+        <dt>reason</dt><dd><code>samesite_strict_or_lax</code></dd>
+<dt>attributes</dt><dd class="mono">Secure; HttpOnly; SameSite=Lax; Path=/</dd>        <dt>remediation</dt><dd>Set SameSite=Lax or Strict unless cross-site delivery is required; SameSite=None requires Secure.</dd>
+<dt>reference</dt><dd class="mono">https://datatracker.ietf.org/doc/html/rfc6265</dd><dt>reference</dt><dd class="mono">https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie</dd><dt>reference</dt><dd class="mono">https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html</dd><dt>limitation</dt><dd>Cookie purpose unknown.</dd>      </dl>
+    </details>
+  </td>
+</tr>
+<tr>
+  <td><code>WG-CK-004</code><br>Cookie name prefixes</td>
+  <td class="mono">cookie:sid@hop:0</td>
+  <td><span class="pill st-not_applicable">not_applicable</span></td>
+  <td>-</td>
+  <td>The cookie name has no __Secure- or __Host- prefix.
+    <details>
+      <summary>evidence, remediation, references</summary>
+      <dl>
+        <dt>reason</dt><dd><code>not_prefixed</code></dd>
+        <dt>remediation</dt><dd>__Secure- cookies need Secure; __Host- cookies need Secure, Path=/ and no Domain.</dd>
+<dt>reference</dt><dd class="mono">https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#cookie_prefixes</dd><dt>reference</dt><dd class="mono">https://datatracker.ietf.org/doc/html/rfc6265</dd>      </dl>
+    </details>
+  </td>
+</tr>
+<tr>
+  <td><code>WG-HDR-001</code><br>HTTP Strict Transport Security (HSTS)</td>
+  <td class="mono">hop:0</td>
+  <td><span class="pill st-pass">pass</span></td>
+  <td><span class="meta">confidence high</span></td>
+  <td>HSTS is set with a max-age of at least 180 days.
+    <details>
+      <summary>evidence, remediation, references</summary>
+      <dl>
+        <dt>reason</dt><dd><code>present</code></dd>
+<dt>strict-transport-security</dt><dd class="mono">max-age=31536000; includeSubDomains</dd><dt>max_age</dt><dd class="mono">31536000</dd><dt>include_subdomains</dt><dd class="mono">true</dd><dt>preload</dt><dd class="mono">false</dd>        <dt>remediation</dt><dd>Send `Strict-Transport-Security: max-age=31536000; includeSubDomains` on every HTTPS response once all subdomains serve HTTPS.</dd>
+<dt>reference</dt><dd class="mono">https://datatracker.ietf.org/doc/html/rfc6797</dd><dt>reference</dt><dd class="mono">https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security</dd><dt>reference</dt><dd class="mono">https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Strict_Transport_Security_Cheat_Sheet.html</dd><dt>limitation</dt><dd>Only the first header instance is evaluated (RFC 6797 section 8.1).</dd><dt>limitation</dt><dd>includeSubDomains and preload are recorded as evidence, not graded.</dd>      </dl>
+    </details>
+  </td>
+</tr>
+<tr>
+  <td><code>WG-HDR-002</code><br>Content Security Policy (enforcing)</td>
+  <td class="mono">hop:0</td>
+  <td><span class="pill st-pass">pass</span></td>
+  <td><span class="meta">confidence high</span></td>
+  <td>An enforcing Content-Security-Policy header is present.
+    <details>
+      <summary>evidence, remediation, references</summary>
+      <dl>
+        <dt>reason</dt><dd><code>present</code></dd>
+<dt>content-security-policy</dt><dd class="mono">default-src &#39;self&#39;</dd>        <dt>remediation</dt><dd>Deploy an enforcing Content-Security-Policy; start from a restrictive default-src and iterate using a report-only policy first.</dd>
+<dt>reference</dt><dd class="mono">https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP</dd><dt>reference</dt><dd class="mono">https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html</dd><dt>limitation</dt><dd>&lt;meta&gt; CSP not detectable without the body; policy quality not graded.</dd>      </dl>
+    </details>
+  </td>
+</tr>
+<tr>
+  <td><code>WG-HDR-003</code><br>X-Content-Type-Options</td>
+  <td class="mono">hop:0</td>
+  <td><span class="pill st-pass">pass</span></td>
+  <td><span class="meta">confidence high</span></td>
+  <td>X-Content-Type-Options is set to nosniff.
+    <details>
+      <summary>evidence, remediation, references</summary>
+      <dl>
+        <dt>reason</dt><dd><code>nosniff</code></dd>
+<dt>x-content-type-options</dt><dd class="mono">nosniff</dd>        <dt>remediation</dt><dd>Send `X-Content-Type-Options: nosniff` on every response.</dd>
+<dt>reference</dt><dd class="mono">https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options</dd><dt>reference</dt><dd class="mono">https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html</dd>      </dl>
+    </details>
+  </td>
+</tr>
+<tr>
+  <td><code>WG-RDR-001</code><br>Redirect downgrade to HTTP</td>
+  <td class="mono">hop:0</td>
+  <td><span class="pill st-not_applicable">not_applicable</span></td>
+  <td>-</td>
+  <td>The response is not a redirect.
+    <details>
+      <summary>evidence, remediation, references</summary>
+      <dl>
+        <dt>reason</dt><dd><code>not_redirect</code></dd>
+        <dt>remediation</dt><dd>Redirect only to https:// URLs and enable HSTS so browsers never request HTTP.</dd>
+<dt>reference</dt><dd class="mono">https://datatracker.ietf.org/doc/html/rfc9110#section-15.4</dd><dt>reference</dt><dd class="mono">https://datatracker.ietf.org/doc/html/rfc6797</dd><dt>reference</dt><dd class="mono">https://developer.mozilla.org/en-US/docs/Web/HTTP/Redirections</dd>      </dl>
+    </details>
+  </td>
+</tr>
+<tr>
+  <td><code>WG-TLS-001</code><br>Certificate verification</td>
+  <td class="mono">hop:0</td>
+  <td><span class="pill st-pass">pass</span></td>
+  <td><span class="meta">confidence high</span></td>
+  <td>The certificate chain and hostname verified against the trust store.
+    <details>
+      <summary>evidence, remediation, references</summary>
+      <dl>
+        <dt>reason</dt><dd><code>verified</code></dd>
+<dt>protocol</dt><dd class="mono">TLSv1.3</dd>        <dt>remediation</dt><dd>Serve a certificate that is currently valid, issued by a publicly trusted CA, covers the hostname, and is sent with its full intermediate chain.</dd>
+<dt>reference</dt><dd class="mono">https://datatracker.ietf.org/doc/html/rfc5280</dd><dt>reference</dt><dd class="mono">https://datatracker.ietf.org/doc/html/rfc6125</dd><dt>reference</dt><dd class="mono">https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Security_Cheat_Sheet.html</dd><dt>limitation</dt><dd>Trust is evaluated against the certifi CA bundle, which may differ from operating-system and browser trust stores.</dd>      </dl>
+    </details>
+  </td>
+</tr>
+<tr>
+  <td><code>WG-TLS-002</code><br>Certificate expiry horizon</td>
+  <td class="mono">hop:0</td>
+  <td><span class="pill st-pass">pass</span></td>
+  <td><span class="meta">confidence high</span></td>
+  <td>The certificate remains valid for more than 30 days.
+    <details>
+      <summary>evidence, remediation, references</summary>
+      <dl>
+        <dt>reason</dt><dd><code>expiry_beyond_30_days</code></dd>
+<dt>not_after</dt><dd class="mono">3000-01-01T00:00:00+00:00</dd><dt>days_remaining</dt><dd class="mono">355446.2</dd>        <dt>remediation</dt><dd>Renew the certificate before it expires; automate renewal and alert on short horizons.</dd>
+<dt>reference</dt><dd class="mono">https://datatracker.ietf.org/doc/html/rfc5280#section-4.1.2.5</dd><dt>reference</dt><dd class="mono">https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Security_Cheat_Sheet.html</dd><dt>limitation</dt><dd>Measured against the scan start time from this vantage point only.</dd>      </dl>
+    </details>
+  </td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<h2>Per-hop evidence</h2>
+<div class="table-wrap">
+<table>
+<thead><tr><th>#</th><th>URL (query redacted)</th><th>Addresses</th><th>TLS</th><th>Certificate</th><th>HTTP</th><th>Outcome</th></tr></thead>
+<tbody>
+<tr>
+  <td>0</td>
+  <td class="mono">https://webguard.test:8443/</td>
+  <td class="mono">webguard.test:8443<br>resolved 127.0.0.1<br>connected 127.0.0.1</td>
+  <td>verified (TLSv1.3)</td>
+  <td>-; issuer -; expires 3000-01-01</td>
+  <td>200 HTTP/1.1</td>
+  <td class="mono">headers captured</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<h2>Limitations</h2>
+<ul>
+<li>Passive configuration assessment; not a penetration test. Passing checks do not mean the site is secure.</li>
+<li>Only the response status line and headers are inspected; the body is never read, so &lt;meta&gt; CSP and page content are not assessed.</li>
+<li>TLS checks cover certificate verification and expiry only; protocol versions and cipher suites are not audited.</li>
+<li>Trust is evaluated against the certifi CA bundle, which may differ from your operating system or browser trust store.</li>
+<li>URL paths are reported as given and may contain tokens; query values are redacted.</li>
+<li>Results describe one moment from one network vantage point.</li>
+</ul>
+
+<footer>Generated by WebGuard 1.0.0. Scan ID cfd7baff9cee4fd786d6f4e9f45ecafc.
+References are listed as text; this file loads no external resources and runs no scripts.</footer>
+</main>
+</body>
+</html>

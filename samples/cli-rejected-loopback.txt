@@ -1,0 +1,4 @@
+$ webguard scan https://127.0.0.1/ --i-am-authorized
+Target rejected (policy_prohibited_address); nothing was sent. loopback:127.0.0.1
+Exit 3: target rejected: policy_prohibited_address
+(exit code 3)

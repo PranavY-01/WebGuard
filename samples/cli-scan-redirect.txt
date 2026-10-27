@@ -1,0 +1,85 @@
+$ webguard scan https://webguard.test:8443/redirect?to=/cookies --i-am-authorized --follow-redirects --output redirect
+                                              WebGuard results                                               
+┌────────────┬─────────────────────────┬────────────────┬───────────────┬───────────────────────────────────┐
+│ Rule       │ Subject                 │ Status         │ Severity      │ Message                           │
+├────────────┼─────────────────────────┼────────────────┼───────────────┼───────────────────────────────────┤
+│ WG-CK-001  │ cookie:__Host-c@hop:1   │ pass           │ -             │ The cookie is marked Secure.      │
+│ WG-CK-001  │ cookie:__Secure-d@hop:1 │ finding        │ medium        │ The cookie is not marked Secure   │
+│            │                         │                │               │ and may be sent over plain HTTP.  │
+│ WG-CK-001  │ cookie:a@hop:1          │ pass           │ -             │ The cookie is marked Secure.      │
+│ WG-CK-001  │ cookie:b@hop:1          │ finding        │ medium        │ The cookie is not marked Secure   │
+│            │                         │                │               │ and may be sent over plain HTTP.  │
+│ WG-CK-001  │ cookie:e@hop:1          │ finding        │ medium        │ The cookie is not marked Secure   │
+│            │                         │                │               │ and may be sent over plain HTTP.  │
+│ WG-CK-001  │ cookie:f@hop:1          │ pass           │ -             │ The cookie is marked Secure.      │
+│ WG-CK-001  │ cookie:g@hop:1          │ pass           │ -             │ The cookie is marked Secure.      │
+│ WG-CK-002  │ cookie:__Host-c@hop:1   │ finding        │ low           │ The cookie is readable by page    │
+│            │                         │                │               │ scripts (no HttpOnly).            │
+│ WG-CK-002  │ cookie:__Secure-d@hop:1 │ finding        │ low           │ The cookie is readable by page    │
+│            │                         │                │               │ scripts (no HttpOnly).            │
+│ WG-CK-002  │ cookie:a@hop:1          │ finding        │ low           │ The cookie is readable by page    │
+│            │                         │                │               │ scripts (no HttpOnly).            │
+│ WG-CK-002  │ cookie:b@hop:1          │ pass           │ -             │ The cookie is marked HttpOnly.    │
+│ WG-CK-002  │ cookie:e@hop:1          │ finding        │ low           │ The cookie is readable by page    │
+│            │                         │                │               │ scripts (no HttpOnly).            │
+│ WG-CK-002  │ cookie:f@hop:1          │ finding        │ low           │ The cookie is readable by page    │
+│            │                         │                │               │ scripts (no HttpOnly).            │
+│ WG-CK-002  │ cookie:g@hop:1          │ pass           │ -             │ The cookie is marked HttpOnly.    │
+│ WG-CK-003  │ cookie:__Host-c@hop:1   │ finding        │ informational │ SameSite is not set; the browser  │
+│            │                         │                │               │ default applies.                  │
+│ WG-CK-003  │ cookie:__Secure-d@hop:1 │ finding        │ informational │ SameSite is not set; the browser  │
+│            │                         │                │               │ default applies.                  │
+│ WG-CK-003  │ cookie:a@hop:1          │ finding        │ informational │ SameSite is not set; the browser  │
+│            │                         │                │               │ default applies.                  │
+│ WG-CK-003  │ cookie:b@hop:1          │ finding        │ informational │ SameSite is not set; the browser  │
+│            │                         │                │               │ default applies.                  │
+│ WG-CK-003  │ cookie:e@hop:1          │ finding        │ medium        │ SameSite=None without Secure;     │
+│            │                         │                │               │ browsers reject this cookie.      │
+│ WG-CK-003  │ cookie:f@hop:1          │ pass           │ -             │ SameSite=None is combined with    │
+│            │                         │                │               │ Secure (cross-site use is         │
+│            │                         │                │               │ explicit).                        │
+│ WG-CK-003  │ cookie:g@hop:1          │ finding        │ low           │ SameSite has an unrecognized      │
+│            │                         │                │               │ value.                            │
+│ WG-CK-004  │ cookie:__Host-c@hop:1   │ pass           │ -             │ The cookie satisfies its          │
+│            │                         │                │               │ __Secure-/__Host- prefix rules.   │
+│ WG-CK-004  │ cookie:__Secure-d@hop:1 │ finding        │ medium        │ The cookie violates its           │
+│            │                         │                │               │ __Secure-/__Host- prefix rules    │
+│            │                         │                │               │ and browsers will reject it.      │
+│ WG-CK-004  │ cookie:a@hop:1          │ not_applicable │ -             │ The cookie name has no __Secure-  │
+│            │                         │                │               │ or __Host- prefix.                │
+│ WG-CK-004  │ cookie:b@hop:1          │ not_applicable │ -             │ The cookie name has no __Secure-  │
+│            │                         │                │               │ or __Host- prefix.                │
+│ WG-CK-004  │ cookie:e@hop:1          │ not_applicable │ -             │ The cookie name has no __Secure-  │
+│            │                         │                │               │ or __Host- prefix.                │
+│ WG-CK-004  │ cookie:f@hop:1          │ not_applicable │ -             │ The cookie name has no __Secure-  │
+│            │                         │                │               │ or __Host- prefix.                │
+│ WG-CK-004  │ cookie:g@hop:1          │ not_applicable │ -             │ The cookie name has no __Secure-  │
+│            │                         │                │               │ or __Host- prefix.                │
+│ WG-HDR-001 │ hop:0                   │ pass           │ -             │ HSTS is set with a max-age of at  │
+│            │                         │                │               │ least 180 days.                   │
+│ WG-HDR-001 │ hop:1                   │ finding        │ medium        │ No Strict-Transport-Security      │
+│            │                         │                │               │ header was returned.              │
+│ WG-HDR-002 │ hop:1                   │ finding        │ low           │ No Content-Security-Policy header │
+│            │                         │                │               │ was returned.                     │
+│ WG-HDR-003 │ hop:1                   │ finding        │ low           │ No X-Content-Type-Options header  │
+│            │                         │                │               │ was returned.                     │
+│ WG-RDR-001 │ hop:0                   │ pass           │ -             │ The redirect stays on HTTPS.      │
+│ WG-RDR-001 │ hop:1                   │ not_applicable │ -             │ The response is not a redirect.   │
+│ WG-TLS-001 │ hop:0                   │ pass           │ -             │ The certificate chain and         │
+│            │                         │                │               │ hostname verified against the     │
+│            │                         │                │               │ trust store.                      │
+│ WG-TLS-001 │ hop:1                   │ pass           │ -             │ The certificate chain and         │
+│            │                         │                │               │ hostname verified against the     │
+│            │                         │                │               │ trust store.                      │
+│ WG-TLS-002 │ hop:0                   │ pass           │ -             │ The certificate remains valid for │
+│            │                         │                │               │ more than 30 days.                │
+│ WG-TLS-002 │ hop:1                   │ pass           │ -             │ The certificate remains valid for │
+│            │                         │                │               │ more than 30 days.                │
+└────────────┴─────────────────────────┴────────────────┴───────────────┴───────────────────────────────────┘
+Status completed: 38 checks, 14 pass, 18 finding, 0 inconclusive, 0 error, 6 not applicable (high 0, medium 
+6, low 8, informational 4)
+Target https://webguard.test:8443/redirect?to=REDACTED
+Report written: redirect\webguard_20261027T184949Z_e84f6e1c.json
+Report written: redirect\webguard_20261027T184949Z_e84f6e1c.html
+Exit 0: scan completed; no finding at or above --fail-on high
+(exit code 0)
