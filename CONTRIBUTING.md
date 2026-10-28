@@ -44,7 +44,7 @@ Tests fail if `docs/RULES.md` or the known-answer record is out of date.
 
 ## Design documents
 
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): layers, the egress pipeline, invariants and implementation decisions.
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): layers, the request pipeline, invariants and design decisions.
 - [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md): threats, mitigations and residual risk.
 
 Report security issues privately; see [SECURITY.md](SECURITY.md).
